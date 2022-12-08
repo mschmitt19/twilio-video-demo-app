@@ -10,15 +10,26 @@
     "tsc": "tsc --noEmit"
   },
   "dependencies": {
+    "@hookform/resolvers": "^2.9.10",
+    "@reduxjs/toolkit": "^1.9.1",
     "@twilio-paste/core": "^17.0.0",
     "@twilio-paste/icons": "^9.3.1",
+    "axios": "^1.2.0",
     "next": "^12.1.6",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-hook-form": "^7.40.0",
+    "react-icons": "^4.7.1",
+    "react-query": "^3.39.2",
+    "twilio": "^3.83.4",
+    "twilio-video": "^2.25.0",
+    "yup": "^0.32.11",
+    "zustand": "^4.1.4"
   },
   "devDependencies": {
     "@types/node": "^17.0.33",
+    "@types/twilio": "^3.19.3",
     "eslint": "^7.32.0",
     "typescript": "^4.6.4"
   },
