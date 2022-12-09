@@ -1,5 +1,48 @@
 import { styled, css } from "@twilio-paste/styling-library";
 
+export const VideoContainer = styled.video(
+  css({
+    width: "100%",
+    height: "100%",
+  })
+);
+
+export const AvatarContainer = styled.div(
+  css({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#000000",
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 1,
+  })
+);
+
+export const VideoPreviewContainer = styled.div(
+  css({
+    position: "relative",
+    height: 0,
+    overflow: "hidden",
+    paddingTop: `${(9 / 16) * 100}%`,
+    width: "100%",
+    borderRadius: "6px",
+  })
+);
+
+export const InnerPreviewContainer = styled.div(
+  css({
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+  })
+);
+
 export const CenterContent = styled.div(
   css({
     paddingX: "space40",
@@ -9,7 +52,6 @@ export const CenterContent = styled.div(
     minHeight: "100vh",
     justifyContent: "center",
     flexDirection: "column",
-    //backgroundColor: "colorBackground",
     backgroundColor: "rgb(45, 46, 45)",
     alignItems: "center",
     alignContent: "center",
@@ -19,25 +61,13 @@ export const CenterContent = styled.div(
 
 export const OverlayContent = styled.div(
   css({
-    bottom: 40,
+    position: "absolute",
+    bottom: 0,
     opacity: 0.8,
     padding: "space20",
-    backgroundColor: "#000000",
+    backgroundColor: "#FFFFFF",
     zIndex: 100,
-  })
-);
-
-export const VideoDivContainer = styled.div(
-  css({
-    width: "100%",
-    justifyContent: "center",
-    alignContent: "center",
-    testAlign: "center",
-    position: "relative",
-    top: 0,
-    left: 0,
-    backgroundColor: "colorBackgroundPrimary",
-    minHeight: "100%",
+    borderRadius: "0px 6px 0px 0px",
   })
 );
 
@@ -69,22 +99,6 @@ export const FooterDiv = styled.div(
     backgroundColor: "rgb(0, 0, 0)",
   })
 );
-
-export const taskContainerStyle = {
-  display: "flex",
-  justifyContext: "space-between",
-  paddingLeft: 0,
-  width: "100%",
-  borderLeft: "1px solid rgb(198, 202, 215)",
-  backgroundColor: "rgb(251, 251, 252)",
-};
-
-export const mediaTrackContainer = {
-  width: "100%",
-  justifyContent: "center",
-  alignContent: "center",
-  testAlign: "center",
-};
 
 export const MaxWidthDiv = styled.div(
   css({
