@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import {
   Flex,
   Card,
-  Heading,
+  Stack,
   Label,
   Input,
   HelpText,
   Button,
-  Text,
   Alert,
+  Callout,
+  CalloutHeading,
+  CalloutText,
 } from "@twilio-paste/core";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
@@ -72,77 +74,74 @@ export default function LandingScreen({}) {
       >
         <TwilioHeading heading="Twilio Video Feature Demo" />
         <MaxWidthDiv>
-          <Card>
-            <Heading as="h4" variant="heading40">
-              Welcome!
-            </Heading>
-            <Text
-              as="p"
-              fontSize="fontSize20"
-              fontWeight="fontWeightMedium"
-              color="colorText"
-            >
-              This quickstart application aims at getting you stood up rapidly
-              with a React web application, powered by{" "}
-              <a
-                href="https://www.twilio.com/docs/video/javascript"
-                target="_blank"
-                rel="noopener"
-              >
-                Twilio Video JS
-              </a>
-              .
-            </Text>
-            <form onSubmit={handleSubmit(handleFormSave)}>
-              <Flex marginTop="space40" vertical>
-                <Flex marginTop="space20" vertical width="100%">
-                  <Label htmlFor="identity" required>
-                    Identity / Name
-                  </Label>
-                  <Input {...register("identity")} type="text" />
-                  {errors.identity && (
-                    <Flex marginTop="space40" marginBottom="space40">
-                      <Alert variant="error">
-                        {errors?.identity?.message ?? ""}
-                      </Alert>
-                    </Flex>
-                  )}
+          <Stack orientation="vertical" spacing="space60">
+            <Callout variant="new">
+              <CalloutHeading as="h3">Ahoy!</CalloutHeading>
+              <CalloutText>
+                This quickstart application aims at getting you stood up rapidly
+                with a React web application, powered by{" "}
+                <a
+                  href="https://www.twilio.com/docs/video/javascript"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Twilio Video JS
+                </a>
+                .
+              </CalloutText>
+            </Callout>
+            <Card>
+              <form onSubmit={handleSubmit(handleFormSave)}>
+                <Flex vertical>
+                  <Flex marginTop="space20" vertical width="100%">
+                    <Label htmlFor="identity" required>
+                      Participant Name
+                    </Label>
+                    <Input {...register("identity")} type="text" />
+                    {errors.identity && (
+                      <Flex marginTop="space40" marginBottom="space40">
+                        <Alert variant="error">
+                          {errors?.identity?.message ?? ""}
+                        </Alert>
+                      </Flex>
+                    )}
+                  </Flex>
+                  <Flex marginTop="space40" vertical width="100%">
+                    <Label htmlFor="roomName" required>
+                      Room Name
+                    </Label>
+                    <Input
+                      {...register("roomName")}
+                      type="text"
+                      placeholder="ex. 123456"
+                      disabled={roomNameDisabled}
+                    />
+                    <HelpText id="email_help_text">
+                      {roomNameDisabled
+                        ? "Room name was auto-populated by invite URL"
+                        : "To join a video room manually, please enter the room name."}
+                    </HelpText>
+                    {errors.roomName && (
+                      <Flex marginTop="space40" marginBottom="space40">
+                        <Alert variant="error">
+                          {errors?.roomName?.message ?? ""}
+                        </Alert>
+                      </Flex>
+                    )}
+                  </Flex>
+                  <Flex marginTop={"space40"}>
+                    <Button
+                      type="submit"
+                      variant="destructive"
+                      style={{ background: "#F22F46" }}
+                    >
+                      Next
+                    </Button>
+                  </Flex>
                 </Flex>
-                <Flex marginTop="space40" vertical width="100%">
-                  <Label htmlFor="roomName" required>
-                    Room Name
-                  </Label>
-                  <Input
-                    {...register("roomName")}
-                    type="text"
-                    placeholder="ex. 123456"
-                    disabled={roomNameDisabled}
-                  />
-                  <HelpText id="email_help_text">
-                    {roomNameDisabled
-                      ? "Room name was auto-populated by invite URL"
-                      : "To join a video room manually, please enter the room name."}
-                  </HelpText>
-                  {errors.roomName && (
-                    <Flex marginTop="space40" marginBottom="space40">
-                      <Alert variant="error">
-                        {errors?.roomName?.message ?? ""}
-                      </Alert>
-                    </Flex>
-                  )}
-                </Flex>
-                <Flex marginTop={"space40"}>
-                  <Button
-                    type="submit"
-                    variant="destructive"
-                    style={{ background: "#F22F46" }}
-                  >
-                    Next
-                  </Button>
-                </Flex>
-              </Flex>
-            </form>
-          </Card>
+              </form>
+            </Card>
+          </Stack>
         </MaxWidthDiv>
       </Flex>
     </CenterContent>

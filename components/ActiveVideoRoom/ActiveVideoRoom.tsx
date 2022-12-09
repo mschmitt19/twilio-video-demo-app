@@ -7,9 +7,14 @@ import {
   Grid,
   Column,
   Box,
+  PopoverContainer,
+  PopoverButton,
+  Popover,
+  Heading,
+  Separator,
+  Text,
 } from "@twilio-paste/core";
 import { BsMicFill, BsCameraVideoFill } from "react-icons/bs";
-import { FiSettings } from "react-icons/fi";
 import { CgClose } from "react-icons/cg";
 import { TbScreenShare } from "react-icons/tb";
 
@@ -21,18 +26,23 @@ import {
 } from "../styled";
 import TwilioHeading from "../TwilioHeading/TwilioHeading";
 import RoomParticipant from "./RoomParticipant/RoomParticipant";
+import ConfigureSettings from "../ConfigureSettings/ConfigureSettings";
 
 export default function ActiveVideoRoom({}) {
   const room = useVideoStore((state: VideoAppState) => state.room);
   const formData = useVideoStore((state: VideoAppState) => state.formData);
   const setUIStep = useVideoStore((state: VideoAppState) => state.setUIStep);
+  const localTracks = useVideoStore(
+    (state: VideoAppState) => state.localTracks
+  );
   const clearActiveRoom = useVideoStore(
     (state: VideoAppState) => state.clearActiveRoom
   );
-  console.log("video room", room);
 
   function disconnect() {
     if (room) {
+      localTracks.audio?.stop();
+      localTracks.video?.stop();
       room.disconnect();
       clearActiveRoom();
       setUIStep(UIStep.VIDEO_ROOM_DISCONNECT);
@@ -71,8 +81,8 @@ export default function ActiveVideoRoom({}) {
   }
 
   useEffect(() => {
-    handleConnectedParticipant(room.localParticipant);
-    room.participants.forEach(handleConnectedParticipant);
+    handleConnectedParticipant(room?.localParticipant);
+    room?.participants.forEach(handleConnectedParticipant);
   }, []);
 
   return (
@@ -86,7 +96,7 @@ export default function ActiveVideoRoom({}) {
         >
           <Column>
             <Box
-              backgroundColor="colorBackgroundPrimaryWeaker"
+              //backgroundColor="colorBackgroundPrimaryWeaker"
               height="size40"
               display="flex"
               justifyContent="center"
@@ -98,26 +108,24 @@ export default function ActiveVideoRoom({}) {
               />
             </Box>
           </Column>
-          {room.participants.forEach(
-            (remoteParticipant: any, index: number) => {
-              return (
-                <Column key={index}>
-                  <Box
-                    backgroundColor="colorBackgroundPrimaryWeaker"
-                    height="size40"
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <RoomParticipant
-                      participant={remoteParticipant}
-                      //isDominantSpeaker={true}
-                    />
-                  </Box>
-                </Column>
-              );
-            }
-          )}
+          {room?.participants.forEach((remoteParticipant: any, key: string) => {
+            return (
+              <Column key={key}>
+                <Box
+                  backgroundColor="colorBackgroundPrimaryWeaker"
+                  height="size40"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <RoomParticipant
+                    participant={remoteParticipant}
+                    //isDominantSpeaker={true}
+                  />
+                </Box>
+              </Column>
+            );
+          })}
         </Grid>
       </ParticipantContainer>
       <FooterDiv>
@@ -134,7 +142,11 @@ export default function ActiveVideoRoom({}) {
               </Button>
             </Tooltip>
             <Tooltip text="Stop Camera" placement="bottom">
-              <Button variant="primary" size="circle">
+              <Button
+                variant="primary"
+                size="circle"
+                onClick={() => localTracks.video?.stop()}
+              >
                 <BsCameraVideoFill style={{ width: "25px", height: "25px" }} />
               </Button>
             </Tooltip>
@@ -143,16 +155,33 @@ export default function ActiveVideoRoom({}) {
                 <TbScreenShare style={{ width: "25px", height: "25px" }} />
               </Button>
             </Tooltip>
-            <Tooltip text="Device Settings" placement="bottom">
-              <Button variant={"secondary"} size="circle">
-                <FiSettings style={{ width: "25px", height: "25px" }} />
-              </Button>
-            </Tooltip>
-            <Tooltip text="Disconnect" placement="bottom">
-              <Button variant="destructive" size="circle" onClick={disconnect}>
+            <ConfigureSettings />
+            <PopoverContainer baseId="popover-right-example" placement="top">
+              <PopoverButton variant="destructive" size="circle">
                 <CgClose style={{ width: "25px", height: "25px" }} />
-              </Button>
-            </Tooltip>
+              </PopoverButton>
+              <Popover aria-label="Popover">
+                <Box width="size20">
+                  <Heading as="h3" variant="heading30">
+                    Leave Room?
+                  </Heading>
+                  <Separator
+                    orientation="horizontal"
+                    verticalSpacing="space50"
+                  />
+                  <Text as="span">
+                    Are you sure you want to leave the video room?
+                  </Text>
+                  <Separator
+                    orientation="horizontal"
+                    verticalSpacing="space50"
+                  />
+                  <Button onClick={disconnect} variant="destructive" fullWidth>
+                    Disconnect
+                  </Button>
+                </Box>
+              </Popover>
+            </PopoverContainer>
           </Stack>
         </Flex>
       </FooterDiv>
