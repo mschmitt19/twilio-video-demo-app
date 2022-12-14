@@ -6,7 +6,7 @@ import useVideoTrackDimensions from "../../lib/hooks/useVideoTrackDimensions";
 import { VideoContainer } from "../styled";
 
 interface VideoTrackProps {
-  track: IVideoTrack;
+  track: any;
   isLocal?: boolean;
   priority?: Track.Priority | null;
 }

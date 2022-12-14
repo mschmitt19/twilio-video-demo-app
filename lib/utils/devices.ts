@@ -34,6 +34,14 @@ export async function getDeviceInfo() {
   };
 }
 
+export const findDeviceByID = (id: string, deviceList: MediaDeviceInfo[]) => {
+  const foundDevice = deviceList.find((device: any) => device.deviceId === id);
+  if (foundDevice !== undefined) {
+    return foundDevice;
+  }
+  return null;
+};
+
 export const isMobile = (() => {
   if (
     typeof navigator === "undefined" ||

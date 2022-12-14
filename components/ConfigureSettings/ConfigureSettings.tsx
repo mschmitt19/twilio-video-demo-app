@@ -22,6 +22,7 @@ import { FiSettings } from "react-icons/fi";
 import useDevices from "../../lib/hooks/useDevices";
 import VideoPreview from "../VideoPreview/VideoPreview";
 import { useVideoStore, VideoAppState } from "../../store/store";
+import { findDeviceByID } from "../../lib/utils/devices";
 
 interface ConfigureSettingsProps {}
 
@@ -32,6 +33,7 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
   const setLocalTracks = useVideoStore(
     (state: VideoAppState) => state.setLocalTracks
   );
+  const uiStep = useVideoStore((state: VideoAppState) => state.uiStep);
   const clearTrack = useVideoStore((state: VideoAppState) => state.clearTrack);
 
   const [isOpen, setIsOpen] = React.useState(false);
@@ -41,44 +43,20 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
   const { videoInputDevices, audioInputDevices, audioOutputDevices } =
     useDevices();
 
-  const findDeviceByID = (id: string, type: string) => {
-    if (type === "video") {
-      const foundDevice = videoInputDevices.find(
-        (device) => device.deviceId === id
-      );
-      if (foundDevice !== undefined) {
-        return foundDevice;
-      }
-    }
-
-    if (type === "audioInput") {
-      const foundDevice = audioInputDevices.find(
-        (device) => device.deviceId === id
-      );
-      if (foundDevice !== undefined) {
-        return foundDevice;
-      }
-    }
-
-    if (type === "audioOutput") {
-      const foundDevice = audioOutputDevices.find(
-        (device) => device.deviceId === id
-      );
-      if (foundDevice !== undefined) {
-        return foundDevice;
-      }
-    }
-
-    return null;
-  };
-
   function deviceChange(
     deviceID: string,
     type: "video" | "audioInput" | "audioOutput"
   ) {
-    const device = findDeviceByID(deviceID, type);
+    const deviceList =
+      type === "video"
+        ? videoInputDevices
+        : type === "audioInput"
+        ? audioInputDevices
+        : audioOutputDevices;
+    const device = findDeviceByID(deviceID, deviceList);
     console.log(`changed ${type} to `, device?.label);
 
+    /* NEED TO ADD IN DEVICE CONFIGURATION SWITCHING FOR AUDIO INPUT & OUTPUT */
     if (type === "video" && localVideo?.mediaStreamTrack.id !== deviceID) {
       localVideo?.stop();
       clearTrack("video");
@@ -121,11 +99,23 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
           <Stack orientation={"vertical"} spacing="space60">
             <VideoPreview localVideo={localVideo} />
             <Stack orientation="vertical" spacing="space30">
-              <Label htmlFor="author">Video</Label>
+              <Label htmlFor="author">
+                Video{" "}
+                {localVideo === undefined
+                  ? "(disabled)"
+                  : localVideo?.isStopped
+                  ? "(stopped)"
+                  : ""}
+              </Label>
               <Select
                 id="author"
                 onChange={(e) => deviceChange(e.target.value, "video")}
                 defaultValue={localVideo?.mediaStreamTrack.id ?? ""}
+                disabled={
+                  localVideo === undefined ||
+                  localVideo?.isStopped ||
+                  videoInputDevices.length < 2
+                }
                 //value={localVideo.mediaStreamTrack.id}
               >
                 {videoInputDevices.map((videoInput: MediaDeviceInfo) => (

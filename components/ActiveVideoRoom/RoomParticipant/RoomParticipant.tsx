@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { styled, css } from "@twilio-paste/styling-library";
-import { Participant as IParticipant } from "twilio-video";
+import { LocalTrack, Participant as IParticipant } from "twilio-video";
+import VideoPublication from "../../VideoPublication/VideoPublication";
 
 interface RoomParticipantProps {
   participant: IParticipant;
@@ -8,13 +9,18 @@ interface RoomParticipantProps {
   isDominantSpeaker?: boolean;
 }
 
+/* WORK IN PROGRESS -- needs attention */
+
 export default function RoomParticipant({
   participant,
   isLocalParticipant,
   isDominantSpeaker,
 }: RoomParticipantProps) {
   console.log("participant", participant);
-  const tracks = Array.from(participant.tracks.values());
+  // const tracks = Array.from(participant.tracks.values());
+  const track = Array.from(participant.videoTracks.values())[0];
+  console.log(track);
+  //const videoTracks = tracks.filter((track: any) => track.kind === "videoinput");
   const InfoContainer = styled.div(
     css({
       border: `4px solid ${
@@ -35,6 +41,7 @@ export default function RoomParticipant({
       {/* {participant.videoTracks.forEach(
         (track: any) => track.kind === "video" && <VideoTrack track={track} />
       )} */}
+      <VideoPublication identity={participant.identity} localVideo={track} />
     </InfoContainer>
   );
 }

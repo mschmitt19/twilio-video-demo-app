@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Video from "twilio-video";
-import { Card, Flex, Button, Stack, Switch } from "@twilio-paste/core";
+import { Card, Flex, Button, Stack, Switch, Text } from "@twilio-paste/core";
 import {
   BsCameraVideoFill,
   BsCameraVideoOff,
   BsMicFill,
   BsMicMuteFill,
 } from "react-icons/bs";
+import { MdErrorOutline } from "react-icons/md";
 
 import { useGetToken } from "../../lib/api";
 import { UIStep, useVideoStore, VideoAppState } from "../../store/store";
@@ -31,9 +32,10 @@ export default function PreJoinScreen({}) {
 
   const [micEnabled, setMicEnabled] = useState(false);
   const [camEnabled, setCamEnabled] = useState(false);
+  const [preflightStatus, setPreflightStatus] = useState("idle");
 
   const { roomName, identity } = formData;
-  const { data } = useGetToken(roomName, identity);
+  const { data, status: tokenStatus } = useGetToken(roomName, identity);
   const [loading, setLoading] = useState(false);
 
   const joinVideoClicked = async () => {
@@ -139,6 +141,42 @@ export default function PreJoinScreen({}) {
     }
   }
 
+  function joinButtonText() {
+    switch (preflightStatus) {
+      case "idle":
+        return "Join Room";
+      case "loading":
+        return "Checking connectivity...";
+      case "passed":
+        return "Join Video Room";
+      case "failed":
+        return "Unable to join";
+    }
+  }
+
+  // useEffect to run preflight test
+  useEffect(() => {
+    if (tokenStatus === "success") {
+      setPreflightStatus("loading");
+      const { token } = data;
+      const preflightTest = Video.runPreflight(token);
+
+      preflightTest.on("progress", (progress) => {
+        console.log("progress ", progress);
+      });
+
+      preflightTest.on("completed", (report) => {
+        console.log("completed", report);
+        setPreflightStatus("passed");
+      });
+
+      preflightTest.on("failed", (error) => {
+        console.log("failed", error);
+        setPreflightStatus("failed");
+      });
+    }
+  }, [tokenStatus]);
+
   return (
     <CenterContent>
       <Flex
@@ -220,23 +258,40 @@ export default function PreJoinScreen({}) {
                       onClick={async () => await joinVideoClicked()}
                       loading={loading}
                       style={{ background: "#F22F46" }}
+                      disabled={preflightStatus !== "passed"}
                     >
-                      Join Video Room
+                      {joinButtonText()}
                     </Button>
                   </Flex>
-
-                  <span
-                    style={{
-                      color: "#000000",
-                      lineHeight: 1,
-                      fontSize: "12px",
-                      letterSpacing: "wider",
-                      marginTop: "15px",
-                      textAlign: "center",
-                    }}
-                  >
-                    Click to join the video room!
-                  </span>
+                  {preflightStatus !== "failed" ? (
+                    <span
+                      style={{
+                        color: "#000000",
+                        lineHeight: 1,
+                        fontSize: "12px",
+                        letterSpacing: "wider",
+                        marginTop: "15px",
+                        textAlign: "center",
+                      }}
+                    >
+                      Click to join the video room!
+                    </span>
+                  ) : (
+                    <Flex marginTop="space20">
+                      <MdErrorOutline
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          color: "rgb(221, 39, 0)",
+                          marginRight: "10px",
+                        }}
+                      />
+                      <Text as="p" fontSize="fontSize20">
+                        Failed connectivity checks to Twilio Cloud - please
+                        check your network connection.
+                      </Text>
+                    </Flex>
+                  )}
                 </Stack>
               </Flex>
             </Stack>

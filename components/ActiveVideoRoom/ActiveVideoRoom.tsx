@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Tooltip,
   Button,
@@ -14,6 +14,7 @@ import {
   Separator,
   Text,
 } from "@twilio-paste/core";
+import * as Video from "twilio-video";
 import { BsMicFill, BsCameraVideoFill } from "react-icons/bs";
 import { CgClose } from "react-icons/cg";
 import { TbScreenShare } from "react-icons/tb";
@@ -28,6 +29,11 @@ import TwilioHeading from "../TwilioHeading/TwilioHeading";
 import RoomParticipant from "./RoomParticipant/RoomParticipant";
 import ConfigureSettings from "../ConfigureSettings/ConfigureSettings";
 
+interface OrderedParticipant {
+  participant: Video.RemoteParticipant;
+  dominantSpeakerStartTime: number;
+}
+
 export default function ActiveVideoRoom({}) {
   const room = useVideoStore((state: VideoAppState) => state.room);
   const formData = useVideoStore((state: VideoAppState) => state.formData);
@@ -38,6 +44,15 @@ export default function ActiveVideoRoom({}) {
   const clearActiveRoom = useVideoStore(
     (state: VideoAppState) => state.clearActiveRoom
   );
+  const [orderedParticipants, setOrderedParticipants] = useState<
+    OrderedParticipant[]
+  >(
+    Array.from(room?.participants?.values() ?? [], (p) => ({
+      participant: p,
+      dominantSpeakerStartTime: 0,
+    }))
+  );
+  console.log(orderedParticipants);
 
   function disconnect() {
     if (room) {
@@ -80,10 +95,48 @@ export default function ActiveVideoRoom({}) {
     });
   }
 
+  // useEffect(() => {
+  //   handleConnectedParticipant(room?.localParticipant);
+  //   console.log("room", room);
+  //   room?.participants.forEach(handleConnectedParticipant);
+  // }, []);
+
   useEffect(() => {
-    handleConnectedParticipant(room?.localParticipant);
-    room?.participants.forEach(handleConnectedParticipant);
-  }, []);
+    if (room) {
+      //handleConnectedParticipant(room?.localParticipant);
+      const participantArray = Array.from(room.participants.values(), (p) => ({
+        participant: p,
+        dominantSpeakerStartTime: 0,
+      }));
+      setOrderedParticipants(participantArray);
+
+      const handleParticipantConnected = (
+        participant: Video.RemoteParticipant
+      ) => {
+        console.log("participantConnected", participant);
+        setOrderedParticipants((prevParticipants) => [
+          ...prevParticipants,
+          { participant, dominantSpeakerStartTime: 0 },
+        ]);
+      };
+
+      const handleParticipantDisconnected = (
+        participant: Video.RemoteParticipant
+      ) => {
+        setOrderedParticipants((prevParticipants) =>
+          prevParticipants.filter((p) => p.participant !== participant)
+        );
+      };
+
+      room.on("participantConnected", handleParticipantConnected);
+      room.on("participantDisconnected", handleParticipantDisconnected);
+
+      return () => {
+        room.off("participantConnected", handleParticipantConnected);
+        room.off("participantDisconnected", handleParticipantDisconnected);
+      };
+    }
+  }, [room]);
 
   return (
     <ActiveVideoRoomContainer>
@@ -94,6 +147,29 @@ export default function ActiveVideoRoom({}) {
           vertical={[true, true, false]}
           //equalColumnHeights
         >
+          {/* {orderedParticipants.forEach(
+            (remoteParticipant: OrderedParticipant) => {
+              console.log("looping...", remoteParticipant);
+              return (
+                <Column key={remoteParticipant.participant.sid}>
+                  <Box
+                    //backgroundColor="colorBackgroundPrimaryWeaker"
+                    height="size40"
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    test
+                    <RoomParticipant
+                      participant={remoteParticipant.participant}
+                      //isDominantSpeaker={true}
+                    />
+                  </Box>
+                </Column>
+              );
+            }
+          )} */}
+
           <Column>
             <Box
               //backgroundColor="colorBackgroundPrimaryWeaker"
@@ -108,24 +184,20 @@ export default function ActiveVideoRoom({}) {
               />
             </Box>
           </Column>
-          {room?.participants.forEach((remoteParticipant: any, key: string) => {
-            return (
-              <Column key={key}>
-                <Box
-                  backgroundColor="colorBackgroundPrimaryWeaker"
-                  height="size40"
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                >
-                  <RoomParticipant
-                    participant={remoteParticipant}
-                    //isDominantSpeaker={true}
-                  />
-                </Box>
-              </Column>
-            );
-          })}
+          {/* <Column>
+            <Box
+              //backgroundColor="colorBackgroundPrimaryWeaker"
+              height="size40"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <RoomParticipant
+                participant={orderedParticipants[0].participant}
+                //isDominantSpeaker={true}
+              />
+            </Box>
+          </Column> */}
         </Grid>
       </ParticipantContainer>
       <FooterDiv>
