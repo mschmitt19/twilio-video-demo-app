@@ -66,7 +66,7 @@ export const OverlayContent = styled.div(
     opacity: 0.8,
     padding: "space20",
     backgroundColor: "#FFFFFF",
-    zIndex: 100,
+    zIndex: 60,
     borderRadius: "0px 6px 0px 0px",
   })
 );
