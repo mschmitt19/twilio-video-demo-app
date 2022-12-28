@@ -1,48 +1,37 @@
 import React, { useRef, useEffect } from "react";
+import { IVideoTrack } from "../../../lib/types";
 import { Track } from "twilio-video";
-import { VideoContainer } from "../styled";
+import { VideoContainer } from "../../styled";
 
-interface VideoTrackProps {
-  track: any;
+interface VideoElementProps {
+  track: IVideoTrack;
   priority?: Track.Priority | null;
-  isPreview: boolean;
-  identity?: string;
 }
 
-export default function VideoTrack({
-  track,
-  isPreview,
-  priority,
-  identity,
-}: VideoTrackProps) {
-  const vTrack = isPreview ? track : track.track;
+export default function VideoElement({ track, priority }: VideoElementProps) {
   const ref = useRef<HTMLVideoElement>(null!);
 
   useEffect(() => {
     const el = ref.current;
     el.muted = true;
-    if (vTrack?.setPriority && priority) {
-      vTrack.setPriority(priority);
+    if (track.setPriority && priority) {
+      track.setPriority(priority);
     }
-
-    vTrack.attach(el);
-
+    track.attach(el);
     return () => {
-      vTrack?.detach(el);
+      track.detach(el);
 
       // This addresses a Chrome issue where the number of WebMediaPlayers is limited.
       // See: https://github.com/twilio/twilio-video.js/issues/1528
       el.srcObject = null;
 
-      if (vTrack?.setPriority && priority) {
+      if (track.setPriority && priority) {
         // Passing `null` to setPriority will set the track's priority to that which it was published with.
-        vTrack?.setPriority(null);
+        track.setPriority(null);
       }
     };
-  }, [vTrack, priority]);
+  }, [track, priority]);
 
-  // The local video track is mirrored if it is not facing the environment.
-  //const isFrontFacing = mediaStreamTrack?.getSettings().facingMode !== "environment";
   const style = {
     transform: "",
     objectFit: "cover" as const,

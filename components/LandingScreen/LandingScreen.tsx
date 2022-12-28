@@ -50,7 +50,6 @@ export default function LandingScreen({}) {
   });
 
   const handleFormSave = (data: any) => {
-    console.log("data", data);
     setFormData(data);
     setUIStep(UIStep.PRE_JOIN_SCREEN);
   };

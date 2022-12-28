@@ -24,7 +24,7 @@ export default function VideoPreview({
     <VideoPreviewContainer>
       <InnerPreviewContainer>
         {!!localVideo && !localVideo.isStopped ? (
-          <VideoTrack track={localVideo} isLocal />
+          <VideoTrack track={localVideo} isPreview />
         ) : (
           <AvatarContainer>
             <RxAvatar
