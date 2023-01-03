@@ -62,11 +62,20 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
     if (type === "video") {
       set({ localTracks: { ...currentTracks, video: track } });
     }
+    if (type === "screen") {
+      set({ localTracks: { ...currentTracks, screen: track } });
+    }
   },
   clearTrack: (type: "audio" | "video" | "screen") => {
     const currentTracks = get().localTracks;
     if (type === "video") {
       set({ localTracks: { ...currentTracks, video: undefined } });
+    }
+    if (type === "audio") {
+      set({ localTracks: { ...currentTracks, audio: undefined } });
+    }
+    if (type === "screen") {
+      set({ localTracks: { ...currentTracks, screen: undefined } });
     }
   },
   setFormData: (data: LandingPageFormData) => set({ formData: data }),
