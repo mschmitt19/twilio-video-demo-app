@@ -1,6 +1,6 @@
 import React from "react";
 import { styled, css } from "@twilio-paste/styling-library";
-import { Text } from "@twilio-paste/core";
+import { Stack, Text } from "@twilio-paste/core";
 import {
   Participant as IParticipant,
   RemoteVideoTrack,
@@ -21,6 +21,8 @@ import {
   InnerPreviewContainer,
   AvatarContainer,
 } from "../../styled";
+import useIsTrackEnabled from "../../../lib/hooks/useIsTrackEnabled";
+import { BsMicFill, BsMicMute } from "react-icons/bs";
 
 interface RoomParticipantProps {
   participant: IParticipant;
@@ -54,6 +56,7 @@ export default function Participant({
     | LocalAudioTrack
     | RemoteAudioTrack
     | undefined;
+  const isAudioEnabled = useIsTrackEnabled(audioTrack);
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
   const InfoContainer = styled.div(
@@ -71,9 +74,28 @@ export default function Participant({
     <InfoContainer id={participant.sid}>
       <VideoPreviewContainer>
         <OverlayContent>
-          <Text as="p" color="colorText" fontSize="fontSize10">
-            {isLocalParticipant ? `${identity} (you)` : identity}
-          </Text>
+          <Stack orientation="horizontal" spacing="space10">
+            {isAudioEnabled ? (
+              <BsMicFill
+                style={{
+                  width: "12px",
+                  height: "12px",
+                  color: "rgb(72, 221, 0)",
+                }}
+              />
+            ) : (
+              <BsMicMute
+                style={{
+                  width: "12px",
+                  height: "12px",
+                  color: "rgb(221, 39, 0)",
+                }}
+              />
+            )}
+            <Text as="p" color="colorText" fontSize="fontSize10">
+              {isLocalParticipant ? `${identity} (you)` : identity}
+            </Text>
+          </Stack>
         </OverlayContent>
         <InnerPreviewContainer>
           {(!isVideoEnabled || isVideoSwitchedOff) && (

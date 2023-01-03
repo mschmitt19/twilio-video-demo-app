@@ -51,7 +51,7 @@ export default function PreJoinScreen({}) {
     }
 
     if (data.token) {
-      Video.connect(data.token, { tracks })
+      Video.connect(data.token, { tracks, dominantSpeaker: true })
         .then((room: Video.Room) => setActiveRoom(room))
         .then(() => setUIStep(UIStep.VIDEO_ROOM));
     }
@@ -116,7 +116,7 @@ export default function PreJoinScreen({}) {
         setCamEnabled(true);
       } else {
         // no existing track, ask for permissions and setup
-        console.log("setup local audio track");
+        console.log("setup local video track");
         navigator.mediaDevices
           .enumerateDevices()
           .then((devices) => {

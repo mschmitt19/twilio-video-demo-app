@@ -27,6 +27,8 @@ export default function ActiveVideoRoom({}) {
   );
   const isVideoEnabled = !!localTracks.video;
   console.log("isVideoEnabled", isVideoEnabled);
+  const [dominantSpeaker, setDominantSpeaker] =
+    useState<Video.RemoteParticipant | null>(null);
 
   const [orderedParticipants, setOrderedParticipants] = useState<
     OrderedParticipant[]
@@ -66,15 +68,33 @@ export default function ActiveVideoRoom({}) {
         );
       };
 
+      const handleDominantSpeakerChanged = (
+        participant: Video.RemoteParticipant
+      ) => {
+        console.log("The new dominant speaker in the Room is:", participant);
+        if (participant) {
+          setDominantSpeaker(participant);
+        } else {
+          setDominantSpeaker(null);
+        }
+      };
+
       room.on("participantConnected", handleParticipantConnected);
       room.on("participantDisconnected", handleParticipantDisconnected);
+      room.on("dominantSpeakerChanged", handleDominantSpeakerChanged);
 
       return () => {
         room.off("participantConnected", handleParticipantConnected);
         room.off("participantDisconnected", handleParticipantDisconnected);
+        room.off("dominantSpeakerChanged", handleDominantSpeakerChanged);
       };
     }
   }, [room]);
+
+  // Disconnect from the Video room if browser tab is refreshed or closed
+  window.addEventListener("beforeunload", () => {
+    room?.disconnect();
+  });
 
   return (
     <ActiveVideoRoomContainer>
@@ -83,6 +103,9 @@ export default function ActiveVideoRoom({}) {
         <Grid vertical={[true, true, false]}>
           {orderedParticipants.length > 0 &&
             orderedParticipants.map((remoteParticipant: OrderedParticipant) => {
+              const isDominant = !!dominantSpeaker
+                ? dominantSpeaker.sid === remoteParticipant.participant.sid
+                : false;
               return (
                 <Column key={remoteParticipant.participant.sid}>
                   <Box
@@ -94,12 +117,12 @@ export default function ActiveVideoRoom({}) {
                     <Participant
                       participant={remoteParticipant.participant}
                       isLocalParticipant={false}
+                      isDominantSpeaker={isDominant}
                     />
                   </Box>
                 </Column>
               );
             })}
-
           <Column>
             <Box
               height="size40"
