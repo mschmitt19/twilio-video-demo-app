@@ -33,9 +33,12 @@ export interface VideoAppState {
   localTracks: LocalTracks;
   setFormData: (data: LandingPageFormData) => void;
   setUIStep: (step: UIStep) => void;
-  setActiveRoom: (room: any) => void;
+  setActiveRoom: (room: Video.Room) => void;
   clearActiveRoom: () => void;
-  setLocalTracks: (type: "audio" | "video" | "screen", track: any) => void;
+  setLocalTracks: (
+    type: "audio" | "video" | "screen",
+    track: Video.LocalAudioTrack | Video.LocalVideoTrack | Video.LocalDataTrack
+  ) => void;
   clearTrack: (type: "audio" | "video" | "screen") => void;
   resetState: () => void;
 }
@@ -54,7 +57,7 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
     screen: undefined,
     data: undefined,
   },
-  setLocalTracks: (type: "audio" | "video" | "screen", track: any) => {
+  setLocalTracks: (type, track: any) => {
     const currentTracks = get().localTracks;
     if (type === "audio") {
       set({ localTracks: { ...currentTracks, audio: track } });
@@ -66,7 +69,7 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
       set({ localTracks: { ...currentTracks, screen: track } });
     }
   },
-  clearTrack: (type: "audio" | "video" | "screen") => {
+  clearTrack: (type) => {
     const currentTracks = get().localTracks;
     if (type === "video") {
       set({ localTracks: { ...currentTracks, video: undefined } });
@@ -80,7 +83,7 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
   },
   setFormData: (data: LandingPageFormData) => set({ formData: data }),
   setUIStep: (step: UIStep) => set({ uiStep: step }),
-  setActiveRoom: (activeRoom: any) => set({ room: activeRoom }),
+  setActiveRoom: (activeRoom: Video.Room) => set({ room: activeRoom }),
   clearActiveRoom: () =>
     set({
       room: null,

@@ -66,8 +66,6 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
         console.log(
           `Local Track changed: ${localVideoTrack.kind} (${localVideoTrack})`
         );
-        //const previewContainer = document.getElementById("local-media");
-        //attachTracks([localVideoTrack], previewContainer);
         setLocalTracks("video", localVideoTrack);
       });
     }

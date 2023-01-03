@@ -49,7 +49,7 @@ export default function LandingScreen({}) {
     },
   });
 
-  const handleFormSave = (data: any) => {
+  const handleFormSave = (data: { identity: string; roomName: string }) => {
     setFormData(data);
     setUIStep(UIStep.PRE_JOIN_SCREEN);
   };

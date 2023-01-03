@@ -9,7 +9,7 @@ import {
   VideoPreviewContainer,
   OverlayContent,
 } from "../styled";
-import VideoTrack from "../VideoTrack/VideoTrack";
+import VideoPreviewTrack from "./VideoPreviewTrack/VideoPreviewTrack";
 
 interface VideoPreviewProps {
   identity?: string;
@@ -24,7 +24,7 @@ export default function VideoPreview({
     <VideoPreviewContainer>
       <InnerPreviewContainer>
         {!!localVideo && !localVideo.isStopped ? (
-          <VideoTrack track={localVideo} isPreview />
+          <VideoPreviewTrack track={localVideo} />
         ) : (
           <AvatarContainer>
             <RxAvatar
