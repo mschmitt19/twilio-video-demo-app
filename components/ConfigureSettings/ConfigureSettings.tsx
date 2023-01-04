@@ -20,7 +20,7 @@ import { useUID } from "@twilio-paste/core/uid-library";
 import { FiSettings } from "react-icons/fi";
 
 import useDevices from "../../lib/hooks/useDevices";
-import VideoPreview from "../VideoPreview/VideoPreview";
+import VideoPreview from "../screens/PreJoinScreen/VideoPreview/VideoPreview";
 import { useVideoStore, VideoAppState } from "../../store/store";
 import { findDeviceByID } from "../../lib/utils/devices";
 
@@ -66,8 +66,6 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
         console.log(
           `Local Track changed: ${localVideoTrack.kind} (${localVideoTrack})`
         );
-        //const previewContainer = document.getElementById("local-media");
-        //attachTracks([localVideoTrack], previewContainer);
         setLocalTracks("video", localVideoTrack);
       });
     }

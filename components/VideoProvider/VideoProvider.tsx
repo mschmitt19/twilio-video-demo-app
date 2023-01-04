@@ -1,11 +1,11 @@
 import React from "react";
 
 import BrowserSupport from "../BrowserSupport/BrowserSupport";
-import LandingScreen from "../LandingScreen/LandingScreen";
-import PreJoinScreen from "../PreJoinScreen/PreJoinScreen";
-import ActiveVideoRoom from "../ActiveVideoRoom/ActiveVideoRoom";
+import LandingScreen from "../screens/LandingScreen/LandingScreen";
+import PreJoinScreen from "../screens/PreJoinScreen/PreJoinScreen";
+import ActiveVideoRoom from "../screens/ActiveVideoRoom/ActiveVideoRoom";
 import { UIStep, useVideoStore, VideoAppState } from "../../store/store";
-import PostVideoRoom from "../PostVideoRoom/PostVideoRoom";
+import PostVideoRoom from "../screens/PostVideoRoom/PostVideoRoom";
 
 export default function VideoProvider() {
   const uiStep = useVideoStore((state: VideoAppState) => state.uiStep);

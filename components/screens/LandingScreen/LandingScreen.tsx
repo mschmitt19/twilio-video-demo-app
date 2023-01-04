@@ -17,9 +17,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import { CenterContent, MaxWidthDiv } from "../styled";
-import TwilioHeading from "../TwilioHeading/TwilioHeading";
-import { useVideoStore, VideoAppState, UIStep } from "../../store/store";
+import { CenterContent, MaxWidthDiv } from "../../styled";
+import TwilioHeading from "../../TwilioHeading/TwilioHeading";
+import { useVideoStore, VideoAppState, UIStep } from "../../../store/store";
 
 const formSchema = yup
   .object({
@@ -49,8 +49,7 @@ export default function LandingScreen({}) {
     },
   });
 
-  const handleFormSave = (data: any) => {
-    console.log("data", data);
+  const handleFormSave = (data: { identity: string; roomName: string }) => {
     setFormData(data);
     setUIStep(UIStep.PRE_JOIN_SCREEN);
   };
