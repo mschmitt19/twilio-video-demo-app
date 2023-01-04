@@ -1,9 +1,9 @@
 import React from "react";
 import { Flex, Card, Heading, Text, Button } from "@twilio-paste/core";
 
-import { useVideoStore, VideoAppState } from "../../store/store";
-import { CenterContent, MaxWidthDiv } from "../styled";
-import TwilioHeading from "../TwilioHeading/TwilioHeading";
+import { useVideoStore, VideoAppState } from "../../../store/store";
+import { CenterContent, MaxWidthDiv } from "../../styled";
+import TwilioHeading from "../../TwilioHeading/TwilioHeading";
 
 export default function PostVideoRoom({}) {
   const formData = useVideoStore((state: VideoAppState) => state.formData);

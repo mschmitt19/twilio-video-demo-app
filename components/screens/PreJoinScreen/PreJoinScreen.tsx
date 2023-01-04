@@ -9,12 +9,12 @@ import {
 } from "react-icons/bs";
 import { MdErrorOutline } from "react-icons/md";
 
-import { useGetToken } from "../../lib/api";
-import { UIStep, useVideoStore, VideoAppState } from "../../store/store";
-import { CenterContent, MaxWidthDiv } from "../styled";
-import TwilioHeading from "../TwilioHeading/TwilioHeading";
-import VideoPreview from "../VideoPreview/VideoPreview";
-import ConfigureSettings from "../ConfigureSettings/ConfigureSettings";
+import { useGetToken } from "../../../lib/api";
+import { UIStep, useVideoStore, VideoAppState } from "../../../store/store";
+import { CenterContent, MaxWidthDiv } from "../../styled";
+import TwilioHeading from "../../TwilioHeading/TwilioHeading";
+import VideoPreview from "./VideoPreview/VideoPreview";
+import ConfigureSettings from "../../ConfigureSettings/ConfigureSettings";
 
 export default function PreJoinScreen({}) {
   const formData = useVideoStore((state: VideoAppState) => state.formData);

@@ -1,13 +1,13 @@
 import React from "react";
 
-import { IVideoTrack } from "../../../lib/types";
+import { IVideoTrack } from "../../../../lib/types";
 import {
   LocalTrackPublication,
   Participant,
   RemoteTrackPublication,
   Track,
 } from "twilio-video";
-import useTrack from "../../../lib/hooks/useTrack";
+import useTrack from "../../../../lib/hooks/useTrack";
 import VideoElement from "../VideoElement/VideoElement";
 import AudioElement from "../AudioElement/AudioElement";
 
