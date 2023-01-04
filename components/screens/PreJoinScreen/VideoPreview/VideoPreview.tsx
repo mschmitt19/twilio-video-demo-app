@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  LocalVideoTrack,
-  LocalVideoTrackPublication,
-  VideoTrackPublication,
-} from "twilio-video";
+import { LocalVideoTrack } from "twilio-video";
 import { RxAvatar } from "react-icons/rx";
 import { Text } from "@twilio-paste/core";
 
@@ -12,23 +8,23 @@ import {
   InnerPreviewContainer,
   VideoPreviewContainer,
   OverlayContent,
-} from "../styled";
-import VideoTrack from "../VideoTrack/VideoTrack";
+} from "../../../styled";
+import VideoPreviewTrack from "./VideoPreviewTrack/VideoPreviewTrack";
 
-interface VideoPublicationProps {
+interface VideoPreviewProps {
   identity?: string;
-  localVideo?: LocalVideoTrackPublication | VideoTrackPublication;
+  localVideo?: LocalVideoTrack;
 }
 
-export default function VideoPublication({
+export default function VideoPreview({
   identity,
   localVideo,
-}: VideoPublicationProps) {
+}: VideoPreviewProps) {
   return (
     <VideoPreviewContainer>
       <InnerPreviewContainer>
-        {!!localVideo && localVideo.isTrackEnabled ? (
-          <VideoTrack track={localVideo.track} isLocal />
+        {!!localVideo && !localVideo.isStopped ? (
+          <VideoPreviewTrack track={localVideo} />
         ) : (
           <AvatarContainer>
             <RxAvatar
