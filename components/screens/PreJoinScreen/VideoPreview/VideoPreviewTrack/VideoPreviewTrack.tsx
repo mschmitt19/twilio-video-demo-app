@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { Track, LocalVideoTrack } from "twilio-video";
-import { VideoContainer } from "../../styled";
+import { VideoContainer } from "../../../../styled";
 
 interface VideoPreviewTrackProps {
   track: LocalVideoTrack;

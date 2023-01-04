@@ -3,8 +3,8 @@ import * as Video from "twilio-video";
 import { Tooltip, Button } from "@twilio-paste/core";
 import { BsCameraVideoFill, BsCameraVideoOff } from "react-icons/bs";
 
-import useDevices from "../../../../lib/hooks/useDevices";
-import { useVideoStore, VideoAppState } from "../../../../store/store";
+import useDevices from "../../../../../lib/hooks/useDevices";
+import { useVideoStore, VideoAppState } from "../../../../../store/store";
 
 export default function ToggleVideo() {
   const [isPublishing, setIsPublishing] = useState(false);

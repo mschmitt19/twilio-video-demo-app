@@ -17,9 +17,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import { CenterContent, MaxWidthDiv } from "../styled";
-import TwilioHeading from "../TwilioHeading/TwilioHeading";
-import { useVideoStore, VideoAppState, UIStep } from "../../store/store";
+import { CenterContent, MaxWidthDiv } from "../../styled";
+import TwilioHeading from "../../TwilioHeading/TwilioHeading";
+import { useVideoStore, VideoAppState, UIStep } from "../../../store/store";
 
 const formSchema = yup
   .object({

@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Flex, Stack, Grid, Column, Box } from "@twilio-paste/core";
 import * as Video from "twilio-video";
 
-import { useVideoStore, VideoAppState } from "../../store/store";
+import { useVideoStore, VideoAppState } from "../../../store/store";
 import {
   ActiveVideoRoomContainer,
   FooterDiv,
   ParticipantContainer,
-} from "../styled";
-import TwilioHeading from "../TwilioHeading/TwilioHeading";
+} from "../../styled";
+import TwilioHeading from "../../TwilioHeading/TwilioHeading";
 import Participant from "./Participant/Participant";
-import ConfigureSettings from "../ConfigureSettings/ConfigureSettings";
+import ConfigureSettings from "../../ConfigureSettings/ConfigureSettings";
 import ToggleVideo from "./LocalControls/ToggleVideo/ToggleVideo";
 import ToggleAudio from "./LocalControls/ToggleAudio/ToggleAudio";
 import ToggleScreenshare from "./LocalControls/ToggleScreenshare/ToggleScreenshare";
@@ -22,14 +22,9 @@ interface OrderedParticipant {
 }
 
 export default function ActiveVideoRoom({}) {
-  const { room, formData, localTracks } = useVideoStore(
-    (state: VideoAppState) => state
-  );
-  const isVideoEnabled = !!localTracks.video;
-  console.log("isVideoEnabled", isVideoEnabled);
+  const { room, formData } = useVideoStore((state: VideoAppState) => state);
   const [dominantSpeaker, setDominantSpeaker] =
     useState<Video.RemoteParticipant | null>(null);
-
   const [orderedParticipants, setOrderedParticipants] = useState<
     OrderedParticipant[]
   >(
@@ -100,16 +95,21 @@ export default function ActiveVideoRoom({}) {
     <ActiveVideoRoomContainer>
       <ParticipantContainer>
         <TwilioHeading heading={`Video Room - ${formData.roomName}`} />
-        <Grid vertical={[true, true, false]}>
+        <Grid
+          vertical={orderedParticipants.length > 0 ? [true, true, false] : true}
+          gutter={["space20"]}
+        >
           {orderedParticipants.length > 0 &&
             orderedParticipants.map((remoteParticipant: OrderedParticipant) => {
               const isDominant = !!dominantSpeaker
                 ? dominantSpeaker.sid === remoteParticipant.participant.sid
                 : false;
               return (
-                <Column key={remoteParticipant.participant.sid}>
+                <Column
+                  key={remoteParticipant.participant.sid}
+                  span={orderedParticipants.length > 1 ? [12, 6, 4] : [12, 6]}
+                >
                   <Box
-                    height="size40"
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
@@ -123,13 +123,8 @@ export default function ActiveVideoRoom({}) {
                 </Column>
               );
             })}
-          <Column>
-            <Box
-              height="size40"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
+          <Column span={orderedParticipants.length > 1 ? [12, 6, 4] : [12, 6]}>
+            <Box display="flex" justifyContent="center" alignItems="center">
               <Participant
                 participant={room!.localParticipant}
                 isLocalParticipant

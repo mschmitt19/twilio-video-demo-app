@@ -8,7 +8,7 @@ import {
   InnerPreviewContainer,
   VideoPreviewContainer,
   OverlayContent,
-} from "../styled";
+} from "../../../styled";
 import VideoPreviewTrack from "./VideoPreviewTrack/VideoPreviewTrack";
 
 interface VideoPreviewProps {

@@ -11,7 +11,11 @@ import {
 } from "@twilio-paste/core";
 import { CgClose } from "react-icons/cg";
 
-import { UIStep, useVideoStore, VideoAppState } from "../../../../store/store";
+import {
+  UIStep,
+  useVideoStore,
+  VideoAppState,
+} from "../../../../../store/store";
 
 export default function LeaveRoom() {
   const { room, localTracks, clearActiveRoom, setUIStep } = useVideoStore(

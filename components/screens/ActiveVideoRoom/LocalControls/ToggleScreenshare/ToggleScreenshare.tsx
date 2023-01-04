@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import * as Video from "twilio-video";
 import { Tooltip, Button } from "@twilio-paste/core";
 import { TbScreenShare, TbScreenShareOff } from "react-icons/tb";
-import { useVideoStore, VideoAppState } from "../../../../store/store";
+import { useVideoStore, VideoAppState } from "../../../../../store/store";
 
 export default function ToggleScreenshare() {
   const [isSharing, setIsSharing] = useState(false);

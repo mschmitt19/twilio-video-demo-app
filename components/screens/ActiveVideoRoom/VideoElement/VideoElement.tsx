@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
-import { IVideoTrack } from "../../../lib/types";
+import { IVideoTrack } from "../../../../lib/types";
 import { Track } from "twilio-video";
-import { VideoContainer } from "../../styled";
+import { VideoContainer } from "../../../styled";
 
 interface VideoElementProps {
   track: IVideoTrack;

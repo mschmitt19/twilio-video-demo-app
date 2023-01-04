@@ -3,8 +3,8 @@ import * as Video from "twilio-video";
 import { Tooltip, Button } from "@twilio-paste/core";
 import { BsMicFill, BsMicMute } from "react-icons/bs";
 
-import { useVideoStore, VideoAppState } from "../../../../store/store";
-import useIsTrackEnabled from "../../../../lib/hooks/useIsTrackEnabled";
+import { useVideoStore, VideoAppState } from "../../../../../store/store";
+import useIsTrackEnabled from "../../../../../lib/hooks/useIsTrackEnabled";
 
 export default function ToggleAudio() {
   const { localTracks, setLocalTracks, room } = useVideoStore(

@@ -10,18 +10,18 @@ import {
 } from "twilio-video";
 import { RxAvatar } from "react-icons/rx";
 
-import ParticipantTracks from "../../ParticipantTracks/ParticipantTracks";
-import usePublications from "../../../lib/hooks/usePublications";
-import useTrack from "../../../lib/hooks/useTrack";
-import useIsTrackSwitchedOff from "../../../lib/hooks/useIsTrackSwitchedOff";
-import useParticipantIsReconnecting from "../../../lib/hooks/useParticipantIsReconnecting";
+import ParticipantTracks from "../ParticipantTracks/ParticipantTracks";
+import usePublications from "../../../../lib/hooks/usePublications";
+import useTrack from "../../../../lib/hooks/useTrack";
+import useIsTrackSwitchedOff from "../../../../lib/hooks/useIsTrackSwitchedOff";
+import useParticipantIsReconnecting from "../../../../lib/hooks/useParticipantIsReconnecting";
 import {
   VideoPreviewContainer,
   OverlayContent,
   InnerPreviewContainer,
   AvatarContainer,
-} from "../../styled";
-import useIsTrackEnabled from "../../../lib/hooks/useIsTrackEnabled";
+} from "../../../styled";
+import useIsTrackEnabled from "../../../../lib/hooks/useIsTrackEnabled";
 import { BsMicFill, BsMicMute } from "react-icons/bs";
 
 interface RoomParticipantProps {
