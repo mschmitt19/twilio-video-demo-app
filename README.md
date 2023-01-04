@@ -1,5 +1,5 @@
 <a  href="https://www.twilio.com">
-<img  src="https://static0.twilio.com/marketing/bundles/marketing/img/logos/wordmark-red.svg"  alt="Twilio"  width="250"  />
+<img  src="https://hosted-assets-2838-dev.twil.io/twilio-video-hero.png"  alt="Twilio"  width="250"  />
 </a>
 
 # Twilio Video - Feature Demo App
@@ -21,7 +21,7 @@ The application is broken down into four distinct stages of a typical video chat
 - The initial view that is loaded at the base URL
 - Provides the ability to create or join a video room
 - Form inputs for `Participant Name` (name shown in room) and `Room Name` (Twilio Video Room to join/create)
-- If you append the `?roomName=textexample` parameter to the URL, this will autopopulate the `Room Name` field and disable it, requiring only a `Participant Name` to be entered before proceeding to the `Pre-Join Screen`
+- If you append the `?roomName=test` parameter to the URL, this will autopopulate the `Room Name` field and disable it, requiring only a `Participant Name` to be entered before proceeding to the `Pre-Join Screen`
 
 ### [Pre-Join Screen](/components/screens/PreJoinScreen/PreJoinScreen.tsx)
 
@@ -112,7 +112,7 @@ The global state management solution to store and access information across the 
 
 4. Application should be available at `http://localhost:3000`.
 
-   **Note:** By default, if no `?roomName=` URL Parameter is present, the user needs to enter a `Participant Name` and `Room Name` to connect to. If you append the `?roomName=textexample` parameter to the URL, this will autopopulate the `Room Name` field and disable it, requiring only a `Participant Name` to be entered before proceeding to the `Pre-Join Screen`. Example:
+   **Note:** By default, if no `?roomName=` URL Parameter is present, the user needs to enter a `Participant Name` and `Room Name` to connect to. If you append the `?roomName=test` parameter to the URL, this will autopopulate the `Room Name` field and disable it, requiring only a `Participant Name` to be entered before proceeding to the `Pre-Join Screen`. Example:
 
    ```
    http://localhost:3000/?roomName=test
