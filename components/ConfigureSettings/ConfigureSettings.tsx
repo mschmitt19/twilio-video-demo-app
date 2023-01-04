@@ -107,17 +107,16 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
                   ? "(stopped)"
                   : ""}
               </Label>
-              <Select
-                id="author"
-                onChange={(e) => deviceChange(e.target.value, "video")}
-                defaultValue={localVideo?.mediaStreamTrack.id ?? ""}
-                disabled={
-                  localVideo === undefined ||
-                  localVideo?.isStopped ||
-                  videoInputDevices.length < 2
-                }
-                //value={localVideo.mediaStreamTrack.id}
-              >
+                <Select
+                  id="author"
+                  onChange={(e) => deviceChange(e.target.value, "video")}
+                  defaultValue={localVideo?.mediaStreamTrack.getSettings().deviceId ?? ""}
+                  disabled={
+                    //localVideo === undefined ||
+                    //localVideo?.isStopped ||
+                    videoInputDevices.length < 2
+                  }
+                >
                 {videoInputDevices.map((videoInput: MediaDeviceInfo) => (
                   <Option key={videoInput.deviceId} value={videoInput.deviceId}>
                     {videoInput.label}
