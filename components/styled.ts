@@ -70,14 +70,20 @@ export const OverlayContent = styled.div(
     borderRadius: "0px 6px 0px 0px",
   })
 );
-
+const CONTAINER_GUTTER = "30px";
 export const ParticipantContainer = styled.div(
   css({
-    width: "100%",
-    height: "calc(100vh - 80px)",
-    padding: "space60",
+    height: "calc(100vh - 160px)",
     position: "absolute",
-    top: "0px",
+    display: "flex",
+    top: CONTAINER_GUTTER,
+    right: CONTAINER_GUTTER,
+    bottom: CONTAINER_GUTTER,
+    left: CONTAINER_GUTTER,
+    margin: "0 auto",
+    alignContent: "center",
+    flexWrap: "wrap",
+    justifyContent: "center",
   })
 );
 
@@ -93,10 +99,12 @@ export const ActiveVideoRoomContainer = styled.div(
 export const FooterDiv = styled.div(
   css({
     width: "100%",
-    height: "80px",
+    height: "70px",
+    backgroundColor: "rgb(246, 246, 246)",
+    paddingRight: "14px",
+    paddingLeft: "14px",
     position: "absolute",
-    bottom: "0px",
-    backgroundColor: "rgb(0, 0, 0)",
+    bottom: 0,
   })
 );
 

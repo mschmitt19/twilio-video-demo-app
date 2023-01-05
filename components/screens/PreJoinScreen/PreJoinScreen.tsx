@@ -146,7 +146,7 @@ export default function PreJoinScreen({}) {
       case "idle":
         return "Join Room";
       case "loading":
-        return "Checking connectivity...";
+        return "Loading...";
       case "passed":
         return "Join Video Room";
       case "failed":

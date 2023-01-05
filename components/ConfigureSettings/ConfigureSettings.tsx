@@ -33,7 +33,6 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
   const setLocalTracks = useVideoStore(
     (state: VideoAppState) => state.setLocalTracks
   );
-  const uiStep = useVideoStore((state: VideoAppState) => state.uiStep);
   const clearTrack = useVideoStore((state: VideoAppState) => state.clearTrack);
 
   const [isOpen, setIsOpen] = React.useState(false);
