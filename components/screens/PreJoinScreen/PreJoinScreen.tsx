@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import * as Video from "twilio-video";
-import { Card, Flex, Button, Stack, Switch, Text } from "@twilio-paste/core";
+import {
+  Card,
+  Flex,
+  Button,
+  Stack,
+  Switch,
+  Text,
+  useToaster,
+  Toaster,
+} from "@twilio-paste/core";
 import {
   BsCameraVideoFill,
   BsCameraVideoOff,
@@ -16,7 +25,8 @@ import TwilioHeading from "../../TwilioHeading/TwilioHeading";
 import VideoPreview from "./VideoPreview/VideoPreview";
 import ConfigureSettings from "../../ConfigureSettings/ConfigureSettings";
 
-export default function PreJoinScreen({}) {
+export default function PreJoinScreen() {
+  const toaster = useToaster();
   const formData = useVideoStore((state: VideoAppState) => state.formData);
   const localTracks = useVideoStore(
     (state: VideoAppState) => state.localTracks
@@ -53,7 +63,14 @@ export default function PreJoinScreen({}) {
     if (data.token) {
       Video.connect(data.token, { tracks, dominantSpeaker: true })
         .then((room: Video.Room) => setActiveRoom(room))
-        .then(() => setUIStep(UIStep.VIDEO_ROOM));
+        .then(() => setUIStep(UIStep.VIDEO_ROOM))
+        .catch((error) => {
+          console.log("error", error.message);
+          toaster.push({
+            message: `Error joining room - ${error.message}`,
+            variant: "error",
+          });
+        });
     }
 
     setLoading(false);
@@ -93,7 +110,11 @@ export default function PreJoinScreen({}) {
             setMicEnabled(true);
           })
           .catch((error) => {
-            console.log("error", error);
+            console.log("error", error.message);
+            toaster.push({
+              message: `Error: ${error.message}`,
+              variant: "error",
+            });
             setMicEnabled(false);
           });
       }
@@ -134,7 +155,11 @@ export default function PreJoinScreen({}) {
             setCamEnabled(true);
           })
           .catch((error) => {
-            console.log("error", error);
+            console.log("error", error.message);
+            toaster.push({
+              message: `Error: ${error.message}`,
+              variant: "error",
+            });
             setCamEnabled(false);
           });
       }
@@ -167,11 +192,20 @@ export default function PreJoinScreen({}) {
 
       preflightTest.on("completed", (report) => {
         console.log("completed", report);
+        toaster.push({
+          message: "Preflight test passed! 👌",
+          variant: "success",
+          dismissAfter: 3000,
+        });
         setPreflightStatus("passed");
       });
 
       preflightTest.on("failed", (error) => {
         console.log("failed", error);
+        toaster.push({
+          message: "Preflight test failed 🙁",
+          variant: "error",
+        });
         setPreflightStatus("failed");
       });
     }
@@ -190,7 +224,7 @@ export default function PreJoinScreen({}) {
           <Card paddingTop="space60">
             <Stack orientation="vertical" spacing="space40">
               <VideoPreview
-                identity={identity}
+                identity={identity ?? "Guest"}
                 localVideo={localTracks.video}
               />
               <Flex hAlignContent={"center"}>
@@ -297,6 +331,7 @@ export default function PreJoinScreen({}) {
             </Stack>
           </Card>
         </MaxWidthDiv>
+        <Toaster {...toaster} />
       </Flex>
     </CenterContent>
   );

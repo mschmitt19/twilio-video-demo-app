@@ -1,7 +1,6 @@
 import React from "react";
 import { LocalVideoTrack } from "twilio-video";
-import { RxAvatar } from "react-icons/rx";
-import { Text } from "@twilio-paste/core";
+import { Text, Avatar } from "@twilio-paste/core";
 
 import {
   AvatarContainer,
@@ -12,7 +11,7 @@ import {
 import VideoPreviewTrack from "./VideoPreviewTrack/VideoPreviewTrack";
 
 interface VideoPreviewProps {
-  identity?: string;
+  identity: string;
   localVideo?: LocalVideoTrack;
 }
 
@@ -27,14 +26,16 @@ export default function VideoPreview({
           <VideoPreviewTrack track={localVideo} />
         ) : (
           <AvatarContainer>
-            <RxAvatar
-              style={{ width: "50px", height: "50px", color: "#FFFFFF" }}
-            />
+            <Avatar size={["sizeIcon70", "sizeIcon110"]} name={identity} />
           </AvatarContainer>
         )}
       </InnerPreviewContainer>
       <OverlayContent>
-        <Text as="p" color="colorText" fontSize="fontSize10">
+        <Text
+          as="p"
+          color="colorText"
+          fontSize={["fontSize10", "fontSize20", "fontSize30"]}
+        >
           {identity} (You)
         </Text>
       </OverlayContent>
