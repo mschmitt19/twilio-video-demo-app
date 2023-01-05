@@ -30,7 +30,6 @@ export default function ToggleVideo() {
           .enumerateDevices()
           .then((devices) => {
             const videoInput = devices.find(
-              // TODO: Don't settle for the first device. Use local storage deviceId
               (device) => device.kind === "videoinput"
             );
             return Video.createLocalTracks({

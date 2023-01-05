@@ -18,7 +18,6 @@ export async function isPermissionDenied(name: "camera" | "microphone") {
 }
 
 export async function getDeviceInfo() {
-  console.log('in getDeviceInfo()');
   const devices = await navigator.mediaDevices.enumerateDevices();
   return {
     audioInputDevices: devices.filter((device) => device.kind === "audioinput"),
