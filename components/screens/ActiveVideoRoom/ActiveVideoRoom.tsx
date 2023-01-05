@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Flex, Stack, Grid, Column, Box } from "@twilio-paste/core";
+import { Flex, Stack } from "@twilio-paste/core";
 import * as Video from "twilio-video";
 
 import { useVideoStore, VideoAppState } from "../../../store/store";
@@ -8,13 +8,18 @@ import {
   FooterDiv,
   ParticipantContainer,
 } from "../../styled";
-import TwilioHeading from "../../TwilioHeading/TwilioHeading";
 import Participant from "./Participant/Participant";
 import ConfigureSettings from "../../ConfigureSettings/ConfigureSettings";
 import ToggleVideo from "./LocalControls/ToggleVideo/ToggleVideo";
 import ToggleAudio from "./LocalControls/ToggleAudio/ToggleAudio";
 import ToggleScreenshare from "./LocalControls/ToggleScreenshare/ToggleScreenshare";
 import LeaveRoom from "./LocalControls/LeaveRoom/LeaveRoom";
+import RoomInfo from "./RoomInfo/RoomInfo";
+import {
+  GALLERY_VIEW_ASPECT_RATIO,
+  GALLERY_VIEW_MARGIN,
+} from "../../../lib/constants";
+import useGalleryViewLayout from "../../../lib/hooks/useGalleryViewLayout";
 
 interface OrderedParticipant {
   participant: Video.RemoteParticipant;
@@ -34,6 +39,14 @@ export default function ActiveVideoRoom({}) {
     }))
   );
 
+  const numParticipants =
+    orderedParticipants.length > 0 ? orderedParticipants.length + 1 : 1;
+  const { participantVideoWidth, containerRef } =
+    useGalleryViewLayout(numParticipants);
+  const participantWidth = `${participantVideoWidth}px`;
+  const participantHeight = `${Math.floor(
+    participantVideoWidth * GALLERY_VIEW_ASPECT_RATIO
+  )}px`;
   console.log("orderedParticipants", orderedParticipants);
   console.log("room.localParticipant", room?.localParticipant);
 
@@ -93,60 +106,64 @@ export default function ActiveVideoRoom({}) {
 
   return (
     <ActiveVideoRoomContainer>
-      <ParticipantContainer>
-        <TwilioHeading heading={`Video Room - ${formData.roomName}`} />
-        <Grid
-          vertical={orderedParticipants.length > 0 ? [true, true, false] : true}
-          gutter={["space20"]}
+      <ParticipantContainer ref={containerRef}>
+        {orderedParticipants.length > 0 &&
+          orderedParticipants.map((remoteParticipant: OrderedParticipant) => {
+            const isDominant = !!dominantSpeaker
+              ? dominantSpeaker.sid === remoteParticipant.participant.sid
+              : false;
+            return (
+              <div
+                key={remoteParticipant.participant.sid}
+                style={{
+                  width: participantWidth,
+                  height: participantHeight,
+                  margin: GALLERY_VIEW_MARGIN,
+                }}
+              >
+                <Participant
+                  participant={remoteParticipant.participant}
+                  isLocalParticipant={false}
+                  isDominantSpeaker={isDominant}
+                />
+              </div>
+            );
+          })}
+        <div
+          key={room!.localParticipant.sid}
+          style={{
+            width: participantWidth,
+            height: participantHeight,
+            margin: GALLERY_VIEW_MARGIN,
+          }}
         >
-          {orderedParticipants.length > 0 &&
-            orderedParticipants.map((remoteParticipant: OrderedParticipant) => {
-              const isDominant = !!dominantSpeaker
-                ? dominantSpeaker.sid === remoteParticipant.participant.sid
-                : false;
-              return (
-                <Column
-                  key={remoteParticipant.participant.sid}
-                  span={orderedParticipants.length > 1 ? [12, 6, 4] : [12, 6]}
-                >
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <Participant
-                      participant={remoteParticipant.participant}
-                      isLocalParticipant={false}
-                      isDominantSpeaker={isDominant}
-                    />
-                  </Box>
-                </Column>
-              );
-            })}
-          <Column span={orderedParticipants.length > 1 ? [12, 6, 4] : [12, 6]}>
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <Participant
-                participant={room!.localParticipant}
-                isLocalParticipant
-              />
-            </Box>
-          </Column>
-        </Grid>
+          <Participant
+            participant={room!.localParticipant}
+            isLocalParticipant
+          />
+        </div>
       </ParticipantContainer>
       <FooterDiv>
-        <Flex
-          width="100%"
-          height="100%"
-          hAlignContent={"center"}
-          vAlignContent="center"
-        >
-          <Stack orientation="horizontal" spacing="space70">
-            <ToggleAudio />
-            <ToggleVideo />
-            <ToggleScreenshare />
-            <ConfigureSettings />
-            <LeaveRoom />
-          </Stack>
+        <Flex width="100%" height="100%" vAlignContent="center">
+          <Flex>
+            <RoomInfo
+              roomName={formData.roomName}
+              numParticipants={orderedParticipants.length + 1}
+            />
+          </Flex>
+          <Flex grow hAlignContent={"center"}>
+            <Stack orientation="horizontal" spacing="space70">
+              <ToggleAudio />
+              <ToggleVideo />
+              <ToggleScreenshare />
+              <ConfigureSettings />
+            </Stack>
+          </Flex>
+          <Flex>
+            <Flex width="100%" hAlignContent={"right"} vAlignContent={"center"}>
+              <LeaveRoom />
+            </Flex>
+          </Flex>
         </Flex>
       </FooterDiv>
     </ActiveVideoRoomContainer>
