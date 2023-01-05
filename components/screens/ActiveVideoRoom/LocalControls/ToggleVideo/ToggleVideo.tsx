@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import * as Video from "twilio-video";
-import { Tooltip, Button } from "@twilio-paste/core";
+import { Tooltip, Button, useToaster, Toaster } from "@twilio-paste/core";
 import { BsCameraVideoFill, BsCameraVideoOff } from "react-icons/bs";
 
 import useDevices from "../../../../../lib/hooks/useDevices";
 import { useVideoStore, VideoAppState } from "../../../../../store/store";
 
 export default function ToggleVideo() {
+  const toaster = useToaster();
   const [isPublishing, setIsPublishing] = useState(false);
   const { localTracks, room, clearTrack, setLocalTracks } = useVideoStore(
     (state: VideoAppState) => state
@@ -44,34 +45,41 @@ export default function ToggleVideo() {
             setIsPublishing(false);
           })
           .catch((error) => {
-            console.log("error", error);
+            console.log("error", error.message);
+            toaster.push({
+              message: `Error joining room - ${error.message}`,
+              variant: "error",
+            });
           });
       }
     }
   };
 
   return (
-    <Tooltip
-      text={
-        !hasVideoInputDevices
-          ? "No video"
-          : !!localTracks.video
-          ? "Stop Camera"
-          : "Start Camera"
-      }
-      placement="bottom"
-    >
-      <Button
-        variant={!!localTracks.video ? "primary" : "destructive"}
-        size="circle"
-        onClick={toggleVideo}
+    <>
+      <Tooltip
+        text={
+          !hasVideoInputDevices
+            ? "No video"
+            : !!localTracks.video
+            ? "Stop Camera"
+            : "Start Camera"
+        }
+        placement="bottom"
       >
-        {!!localTracks.video ? (
-          <BsCameraVideoFill style={{ width: "25px", height: "25px" }} />
-        ) : (
-          <BsCameraVideoOff style={{ width: "25px", height: "25px" }} />
-        )}
-      </Button>
-    </Tooltip>
+        <Button
+          variant={!!localTracks.video ? "primary" : "destructive"}
+          size="circle"
+          onClick={toggleVideo}
+        >
+          {!!localTracks.video ? (
+            <BsCameraVideoFill style={{ width: "25px", height: "25px" }} />
+          ) : (
+            <BsCameraVideoOff style={{ width: "25px", height: "25px" }} />
+          )}
+        </Button>
+      </Tooltip>
+      <Toaster {...toaster} />
+    </>
   );
 }

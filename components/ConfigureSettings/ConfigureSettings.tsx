@@ -15,6 +15,8 @@ import {
   Flex,
   Stack,
   Tooltip,
+  useToaster,
+  Toaster,
 } from "@twilio-paste/core";
 import { useUID } from "@twilio-paste/core/uid-library";
 import { FiSettings } from "react-icons/fi";
@@ -27,13 +29,12 @@ import { findDeviceByID } from "../../lib/utils/devices";
 interface ConfigureSettingsProps {}
 
 export default function ConfigureSettings({}: ConfigureSettingsProps) {
-  const localVideo = useVideoStore(
-    (state: VideoAppState) => state.localTracks.video
+  const toaster = useToaster();
+  const { localTracks, setLocalTracks, formData, clearTrack } = useVideoStore(
+    (state: VideoAppState) => state
   );
-  const setLocalTracks = useVideoStore(
-    (state: VideoAppState) => state.setLocalTracks
-  );
-  const clearTrack = useVideoStore((state: VideoAppState) => state.clearTrack);
+  const localVideo = localTracks.video;
+  const { identity } = formData;
 
   const [isOpen, setIsOpen] = React.useState(false);
   const handleOpen = () => setIsOpen(true);
@@ -61,12 +62,19 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
       clearTrack("video");
       Video.createLocalVideoTrack({
         deviceId: { exact: deviceID },
-      }).then(function (localVideoTrack) {
-        console.log(
-          `Local Track changed: ${localVideoTrack.kind} (${localVideoTrack})`
-        );
-        setLocalTracks("video", localVideoTrack);
-      });
+      })
+        .then(function (localVideoTrack) {
+          console.log(
+            `Local Track changed: ${localVideoTrack.kind} (${localVideoTrack})`
+          );
+          setLocalTracks("video", localVideoTrack);
+        })
+        .catch((error) => {
+          toaster.push({
+            message: `Error creating local track - ${error.message}`,
+            variant: "error",
+          });
+        });
     }
   }
 
@@ -94,7 +102,10 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
         <ModalBody>
           <Paragraph>Configure your audio and video settings.</Paragraph>
           <Stack orientation={"vertical"} spacing="space60">
-            <VideoPreview localVideo={localVideo} />
+            <VideoPreview
+              identity={identity ?? "Guest"}
+              localVideo={localVideo}
+            />
             <Stack orientation="vertical" spacing="space30">
               <Label htmlFor="author">
                 Video{" "}
@@ -113,7 +124,6 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
                   localVideo?.isStopped ||
                   videoInputDevices.length < 2
                 }
-                //value={localVideo.mediaStreamTrack.id}
               >
                 {videoInputDevices.map((videoInput: MediaDeviceInfo) => (
                   <Option key={videoInput.deviceId} value={videoInput.deviceId}>
@@ -161,6 +171,7 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
           </ModalFooterActions>
         </ModalFooter>
       </Modal>
+      <Toaster {...toaster} />
     </Flex>
   );
 }
