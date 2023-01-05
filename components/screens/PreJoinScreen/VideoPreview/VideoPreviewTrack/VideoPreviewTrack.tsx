@@ -11,7 +11,6 @@ export default function VideoPreviewTrack({
   track,
   priority,
 }: VideoPreviewTrackProps) {
-  console.log(typeof track);
   const ref = useRef<HTMLVideoElement>(null!);
 
   useEffect(() => {

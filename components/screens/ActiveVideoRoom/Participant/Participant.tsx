@@ -61,12 +61,11 @@ export default function Participant({
 
   const InfoContainer = styled.div(
     css({
-      border: `2px solid ${
+      border: `3px solid ${
         isDominantSpeaker ? "rgb(4, 184, 52)" : "rgb(197, 199, 197)"
       }`,
       borderRadius: "10px",
       width: "100%",
-      maxWidth: "500px",
     })
   );
 

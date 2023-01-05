@@ -5,7 +5,7 @@ interface TwilioHeadingProps {
   heading: string;
 }
 
-export default function LandingScreen({ heading }: TwilioHeadingProps) {
+export default function TwilioHeading({ heading }: TwilioHeadingProps) {
   return (
     <MediaObject as="div" verticalAlign="center" marginBottom={"space40"}>
       <MediaFigure as="div" spacing="space40">
