@@ -31,6 +31,7 @@ export interface VideoAppState {
   uiStep: UIStep;
   formData: LandingPageFormData;
   localTracks: LocalTracks;
+  hasAccessedDevices
   setFormData: (data: LandingPageFormData) => void;
   setUIStep: (step: UIStep) => void;
   setActiveRoom: (room: Video.Room) => void;

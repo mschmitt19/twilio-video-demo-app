@@ -5,6 +5,8 @@ import { getDeviceInfo } from "../utils/devices";
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : never;
 
 export default function useDevices() {
+
+  console.log('in useDevices');
   const [deviceInfo, setDeviceInfo] = useState<
     ThenArg<ReturnType<typeof getDeviceInfo>>
   >({
@@ -12,10 +14,11 @@ export default function useDevices() {
     videoInputDevices: [],
     audioOutputDevices: [],
     hasAudioInputDevices: false,
-    hasVideoInputDevices: false,
+    hasVideoInputDevices: false
   });
 
   useEffect(() => {
+    console.log('in useDevices > useEffect');
     const getDevices = () =>
       getDeviceInfo().then((devices: any) => setDeviceInfo(devices));
     navigator.mediaDevices.addEventListener("devicechange", getDevices);
