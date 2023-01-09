@@ -11,24 +11,14 @@ import {
 } from "@twilio-paste/core";
 import { CgClose } from "react-icons/cg";
 
-import {
-  UIStep,
-  useVideoStore,
-  VideoAppState,
-} from "../../../../../store/store";
+import { useVideoStore, VideoAppState } from "../../../../../store/store";
 
 export default function LeaveRoom() {
-  const { room, localTracks, clearActiveRoom, setUIStep } = useVideoStore(
-    (state: VideoAppState) => state
-  );
+  const { room } = useVideoStore((state: VideoAppState) => state);
 
   function disconnect() {
     if (room) {
-      localTracks.audio?.stop();
-      localTracks.video?.stop();
       room.disconnect();
-      clearActiveRoom();
-      setUIStep(UIStep.VIDEO_ROOM_DISCONNECT);
     }
   }
 

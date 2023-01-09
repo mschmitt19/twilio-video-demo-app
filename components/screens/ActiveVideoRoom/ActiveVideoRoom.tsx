@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Flex, Stack } from "@twilio-paste/core";
 import * as Video from "twilio-video";
 
-import { useVideoStore, VideoAppState } from "../../../store/store";
+import { UIStep, useVideoStore, VideoAppState } from "../../../store/store";
 import {
   ActiveVideoRoomContainer,
   FooterDiv,
@@ -27,7 +27,8 @@ interface OrderedParticipant {
 }
 
 export default function ActiveVideoRoom({}) {
-  const { room, formData } = useVideoStore((state: VideoAppState) => state);
+  const { room, formData, setUIStep, localTracks, setDisconnectError } =
+    useVideoStore((state: VideoAppState) => state);
   const [dominantSpeaker, setDominantSpeaker] =
     useState<Video.RemoteParticipant | null>(null);
   const [orderedParticipants, setOrderedParticipants] = useState<
@@ -90,6 +91,22 @@ export default function ActiveVideoRoom({}) {
       room.on("participantConnected", handleParticipantConnected);
       room.on("participantDisconnected", handleParticipantDisconnected);
       room.on("dominantSpeakerChanged", handleDominantSpeakerChanged);
+      room.once("disconnected", (room, error) => {
+        console.log("room", room);
+        console.log("error", error);
+        localTracks.audio?.stop();
+        localTracks.video?.stop();
+        localTracks.screen?.stop();
+        if (error) {
+          console.log(
+            "You were disconnected from the Room:",
+            error.code,
+            error.message
+          );
+          setDisconnectError(error.code, error.message);
+        }
+        setUIStep(UIStep.VIDEO_ROOM_DISCONNECT);
+      });
 
       return () => {
         room.off("participantConnected", handleParticipantConnected);

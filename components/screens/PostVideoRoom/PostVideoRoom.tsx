@@ -1,13 +1,29 @@
 import React from "react";
-import { Flex, Card, Heading, Text, Button } from "@twilio-paste/core";
+import {
+  Flex,
+  Card,
+  Heading,
+  Text,
+  Button,
+  Callout,
+  CalloutHeading,
+  CalloutText,
+  Separator,
+} from "@twilio-paste/core";
 
 import { useVideoStore, VideoAppState } from "../../../store/store";
 import { CenterContent, MaxWidthDiv } from "../../styled";
 import TwilioHeading from "../../TwilioHeading/TwilioHeading";
+import { disconnectErrors } from "../../../lib/utils/errorDictionary";
+import SurveyCollection from "./SurveyCollection/SurveyCollection";
 
 export default function PostVideoRoom({}) {
-  const formData = useVideoStore((state: VideoAppState) => state.formData);
-  const resetState = useVideoStore((state: VideoAppState) => state.resetState);
+  const { formData, resetState, disconnectError } = useVideoStore(
+    (state: VideoAppState) => state
+  );
+
+  const errorCode = disconnectError?.code;
+  const errorInfo = !!errorCode ? disconnectErrors[errorCode] : null;
 
   return (
     <CenterContent>
@@ -18,20 +34,33 @@ export default function PostVideoRoom({}) {
         height="100%"
       >
         <TwilioHeading heading={`Post Video Room - ${formData.roomName}`} />
+        {!!disconnectError && (
+          <MaxWidthDiv>
+            <Card>
+              <Heading as="h4" variant="heading40">
+                Disconnection Error - {errorCode}
+              </Heading>
+              <Callout variant="error" marginY={"space40"}>
+                <CalloutHeading as="h3">
+                  You were disconnected from the room due to an error:
+                </CalloutHeading>
+                <CalloutText>{errorInfo?.cause}</CalloutText>
+              </Callout>
+              <Text
+                as="p"
+                fontSize="fontSize20"
+                fontWeight="fontWeightMedium"
+                color="colorText"
+              >
+                {errorInfo?.solution}.
+              </Text>
+            </Card>
+          </MaxWidthDiv>
+        )}
         <MaxWidthDiv>
           <Card>
-            <Heading as="h4" variant="heading40">
-              Survey / Experience Collection
-            </Heading>
-            <Text
-              as="p"
-              fontSize="fontSize20"
-              fontWeight="fontWeightMedium"
-              color="colorText"
-            >
-              Use this state of the application to gather post video room
-              surveys (guage the overall experience, issues faced, etc.)
-            </Text>
+            <SurveyCollection />
+            <Separator orientation="horizontal" verticalSpacing="space50" />
             <Flex marginTop={"space60"}>
               <Button
                 type="submit"
@@ -39,7 +68,7 @@ export default function PostVideoRoom({}) {
                 style={{ background: "#F22F46" }}
                 onClick={() => resetState()}
               >
-                Back to Landing Page
+                Join another room
               </Button>
             </Flex>
           </Card>

@@ -15,3 +15,14 @@ export const SELECTED_BACKGROUND_SETTINGS_KEY =
 
 export const GALLERY_VIEW_ASPECT_RATIO = 9 / 16; // 16:9
 export const GALLERY_VIEW_MARGIN = 4;
+
+export const ROOM_ISSUES_FEEDBACK_OPTIONS = [
+  "Couldn't hear",
+  "Others couldn't hear",
+  "Video was low quality",
+  "Video froze or was choppy",
+  "Couldn't see participants",
+  "Sound didn't match video",
+  "Participants couldn't see me",
+  "Other issue",
+];
