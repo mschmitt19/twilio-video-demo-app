@@ -12,9 +12,14 @@ import {
 import { CgClose } from "react-icons/cg";
 
 import { useVideoStore, VideoAppState } from "../../../../../store/store";
+import { TEXT_COPY } from "../../../../../lib/constants";
 
 export default function LeaveRoom() {
   const { room } = useVideoStore((state: VideoAppState) => state);
+  const {
+    LEAVE_ROOM_CONFIRMATION_HEADER,
+    LEAVE_ROOM_CONFIRMATION_DESCRIPTION,
+  } = TEXT_COPY;
 
   function disconnect() {
     if (room) {
@@ -30,10 +35,10 @@ export default function LeaveRoom() {
       <Popover aria-label="Popover">
         <Box width="size20">
           <Heading as="h3" variant="heading30">
-            Leave Room?
+            {LEAVE_ROOM_CONFIRMATION_HEADER}
           </Heading>
           <Separator orientation="horizontal" verticalSpacing="space50" />
-          <Text as="span">Are you sure you want to leave the video room?</Text>
+          <Text as="span">{LEAVE_ROOM_CONFIRMATION_DESCRIPTION}</Text>
           <Separator orientation="horizontal" verticalSpacing="space50" />
           <Button onClick={disconnect} variant="destructive" fullWidth>
             Disconnect

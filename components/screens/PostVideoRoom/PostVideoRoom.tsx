@@ -16,8 +16,10 @@ import { CenterContent, MaxWidthDiv } from "../../styled";
 import TwilioHeading from "../../TwilioHeading/TwilioHeading";
 import { disconnectErrors } from "../../../lib/utils/errorDictionary";
 import SurveyCollection from "./SurveyCollection/SurveyCollection";
+import { TEXT_COPY } from "../../../lib/constants";
 
 export default function PostVideoRoom({}) {
+  const { DISCONNECT_ERROR_HEADER } = TEXT_COPY;
   const { formData, resetState, disconnectError } = useVideoStore(
     (state: VideoAppState) => state
   );
@@ -42,7 +44,7 @@ export default function PostVideoRoom({}) {
               </Heading>
               <Callout variant="error" marginY={"space40"}>
                 <CalloutHeading as="h3">
-                  You were disconnected from the room due to an error:
+                  {DISCONNECT_ERROR_HEADER}
                 </CalloutHeading>
                 <CalloutText>{errorInfo?.cause}</CalloutText>
               </Callout>

@@ -10,9 +10,13 @@ import {
 } from "@twilio-paste/core";
 import { FaRegThumbsUp, FaRegThumbsDown } from "react-icons/fa";
 import { useVideoStore, VideoAppState } from "../../../../store/store";
-import { ROOM_ISSUES_FEEDBACK_OPTIONS } from "../../../../lib/constants";
+import {
+  ROOM_ISSUES_FEEDBACK_OPTIONS,
+  TEXT_COPY,
+} from "../../../../lib/constants";
 
 export default function SurveyCollection({}) {
+  const { SURVEY_COLLECTION_HEADER, SURVEY_COLLECTION_DESCRIPTION } = TEXT_COPY;
   const { room, formData, clearActiveRoom } = useVideoStore(
     (state: VideoAppState) => state
   );
@@ -54,7 +58,7 @@ export default function SurveyCollection({}) {
   return (
     <Flex vertical vAlignContent={"center"} width="100%">
       <Heading as="h4" variant="heading40">
-        Survey / Experience Collection
+        {SURVEY_COLLECTION_HEADER}
       </Heading>
       <Text
         as="p"
@@ -62,8 +66,7 @@ export default function SurveyCollection({}) {
         fontWeight="fontWeightMedium"
         color="colorText"
       >
-        Use this state of the application to gather post video room surveys
-        (gauge the overall experience, issues faced, etc.)
+        {SURVEY_COLLECTION_DESCRIPTION}
       </Text>
       <Flex
         vertical

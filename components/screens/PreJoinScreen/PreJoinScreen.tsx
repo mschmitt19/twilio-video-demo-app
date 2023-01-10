@@ -24,9 +24,11 @@ import { CenterContent, MaxWidthDiv } from "../../styled";
 import TwilioHeading from "../../TwilioHeading/TwilioHeading";
 import VideoPreview from "./VideoPreview/VideoPreview";
 import ConfigureSettings from "../../ConfigureSettings/ConfigureSettings";
+import { TEXT_COPY } from "../../../lib/constants";
 
 export default function PreJoinScreen() {
   const toaster = useToaster();
+  const { HELP_TEXT_PRELIGHT_FAILED, HELP_TEXT_PRELIGHT_PASSED } = TEXT_COPY;
   const formData = useVideoStore((state: VideoAppState) => state.formData);
   const localTracks = useVideoStore(
     (state: VideoAppState) => state.localTracks
@@ -308,7 +310,7 @@ export default function PreJoinScreen() {
                         textAlign: "center",
                       }}
                     >
-                      Click to join the video room!
+                      {HELP_TEXT_PRELIGHT_PASSED}
                     </span>
                   ) : (
                     <Flex marginTop="space20">
@@ -321,8 +323,7 @@ export default function PreJoinScreen() {
                         }}
                       />
                       <Text as="p" fontSize="fontSize20">
-                        Failed connectivity checks to Twilio Cloud - please
-                        check your network connection.
+                        {HELP_TEXT_PRELIGHT_FAILED}
                       </Text>
                     </Flex>
                   )}
