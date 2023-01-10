@@ -51,6 +51,8 @@ export default function SurveyCollection({}) {
     };
 
     console.log("paylod to submit to data warehouse: ", surveyPayload);
+    console.log("TODO: submit payload to endpoint");
+
     setHasSubmitted(true);
     clearActiveRoom();
   }

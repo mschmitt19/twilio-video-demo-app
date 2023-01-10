@@ -20,6 +20,7 @@ import {
   GALLERY_VIEW_MARGIN,
 } from "../../../lib/constants";
 import useGalleryViewLayout from "../../../lib/hooks/useGalleryViewLayout";
+// import HiddenWhen from "../../HiddenWhen/HiddenWhen";
 
 interface OrderedParticipant {
   participant: Video.RemoteParticipant;
@@ -162,12 +163,14 @@ export default function ActiveVideoRoom({}) {
       </ParticipantContainer>
       <FooterDiv>
         <Flex width="100%" height="100%" vAlignContent="center">
+          {/* <HiddenWhen> */}
           <Flex>
             <RoomInfo
               roomName={formData.roomName}
               numParticipants={orderedParticipants.length + 1}
             />
           </Flex>
+          {/* </HiddenWhen> */}
           <Flex grow hAlignContent={"center"}>
             <Stack orientation="horizontal" spacing="space70">
               <ToggleAudio />

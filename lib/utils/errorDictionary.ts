@@ -32,4 +32,9 @@ export const disconnectErrors: DisconnectErrors = {
     solution:
       "1. User should make sure to have a stable internet connection 2. If the user is behind a firewall, then it should allow media traffic to and from Twilio to go through",
   },
+  53118: {
+    id: 53118,
+    solution: "",
+    cause: "The room was ended by the system",
+  },
 };
