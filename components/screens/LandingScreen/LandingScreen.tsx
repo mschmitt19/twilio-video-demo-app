@@ -20,6 +20,7 @@ import * as yup from "yup";
 import { CenterContent, MaxWidthDiv } from "../../styled";
 import TwilioHeading from "../../TwilioHeading/TwilioHeading";
 import { useVideoStore, VideoAppState, UIStep } from "../../../store/store";
+import { TEXT_COPY } from "../../../lib/constants";
 
 const formSchema = yup
   .object({
@@ -31,6 +32,7 @@ const formSchema = yup
 export default function LandingScreen({}) {
   const router = useRouter();
   const [roomNameDisabled, setRoomNameDisabled] = useState(false);
+  const { ROOM_NAME_INPUT_DISABLED, ROOM_NAME_INPUT_ENABLED } = TEXT_COPY;
   const setUIStep = useVideoStore((state: VideoAppState) => state.setUIStep);
   const setFormData = useVideoStore(
     (state: VideoAppState) => state.setFormData
@@ -117,8 +119,8 @@ export default function LandingScreen({}) {
                     />
                     <HelpText id="email_help_text">
                       {roomNameDisabled
-                        ? "Room name was auto-populated by invite URL"
-                        : "To join a video room manually, please enter the room name."}
+                        ? ROOM_NAME_INPUT_DISABLED
+                        : ROOM_NAME_INPUT_ENABLED}
                     </HelpText>
                     {errors.roomName && (
                       <Flex marginTop="space40" marginBottom="space40">
