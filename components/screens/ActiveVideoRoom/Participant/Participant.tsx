@@ -1,6 +1,6 @@
 import React from "react";
 import { styled, css } from "@twilio-paste/styling-library";
-import { Stack, Text } from "@twilio-paste/core";
+import { Stack, Text, Avatar } from "@twilio-paste/core";
 import {
   Participant as IParticipant,
   RemoteVideoTrack,
@@ -8,7 +8,6 @@ import {
   LocalAudioTrack,
   LocalVideoTrack,
 } from "twilio-video";
-import { RxAvatar } from "react-icons/rx";
 
 import ParticipantTracks from "../ParticipantTracks/ParticipantTracks";
 import usePublications from "../../../../lib/hooks/usePublications";
@@ -91,7 +90,11 @@ export default function Participant({
                 }}
               />
             )}
-            <Text as="p" color="colorText" fontSize="fontSize10">
+            <Text
+              as="p"
+              color="colorText"
+              fontSize={["fontSize10", "fontSize20", "fontSize30"]}
+            >
               {isLocalParticipant ? `${identity} (you)` : identity}
             </Text>
           </Stack>
@@ -99,9 +102,7 @@ export default function Participant({
         <InnerPreviewContainer>
           {(!isVideoEnabled || isVideoSwitchedOff) && (
             <AvatarContainer>
-              <RxAvatar
-                style={{ width: "50px", height: "50px", color: "#FFFFFF" }}
-              />
+              <Avatar size={["sizeIcon70", "sizeIcon110"]} name={identity} />
             </AvatarContainer>
           )}
           <ParticipantTracks
