@@ -14,6 +14,7 @@ import {
   ROOM_ISSUES_FEEDBACK_OPTIONS,
   TEXT_COPY,
 } from "../../../../lib/constants";
+import { shipSurveyFeedback } from "../../../../lib/api";
 
 export default function SurveyCollection({}) {
   const { SURVEY_COLLECTION_HEADER, SURVEY_COLLECTION_DESCRIPTION } = TEXT_COPY;
@@ -45,13 +46,14 @@ export default function SurveyCollection({}) {
       roomName: formData.roomName,
       participantSid: room?.localParticipant.sid,
       participantIdentity: formData.identity,
-      thumbsUpOrDown: thumb,
+      thumbsUpOrDown: thumb ?? "up",
       issuesFaced,
       otherIssues,
     };
 
     console.log("paylod to submit to data warehouse: ", surveyPayload);
-    console.log("TODO: submit payload to endpoint");
+
+    await shipSurveyFeedback(surveyPayload);
 
     setHasSubmitted(true);
     clearActiveRoom();

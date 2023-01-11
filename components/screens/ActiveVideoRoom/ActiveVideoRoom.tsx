@@ -20,6 +20,7 @@ import {
   GALLERY_VIEW_MARGIN,
 } from "../../../lib/constants";
 import useGalleryViewLayout from "../../../lib/hooks/useGalleryViewLayout";
+import { shipRoomStats } from "../../../lib/api";
 // import HiddenWhen from "../../HiddenWhen/HiddenWhen";
 
 interface OrderedParticipant {
@@ -115,6 +116,14 @@ export default function ActiveVideoRoom({}) {
         room.off("dominantSpeakerChanged", handleDominantSpeakerChanged);
       };
     }
+  }, [room]);
+
+  // Ship WebRTC stats to data store
+  useEffect(() => {
+    const shipStats = setInterval(async () => {
+      room?.getStats().then((results) => shipRoomStats(results[0]));
+    }, 15000);
+    return () => clearInterval(shipStats);
   }, [room]);
 
   // Disconnect from the Video room if browser tab is refreshed or closed
