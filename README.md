@@ -19,7 +19,7 @@ The application is broken down into four distinct stages of a typical video chat
 ### [Landing Screen](/components/screens/LandingScreen/LandingScreen.tsx)
 
 <div style="width:100%; margin: 20px">
-<img  src="https://hosted-assets-2838-dev.twil.io/landing.png"  alt="Twilio"  width="90%"  />
+<img  src="https://hosted-assets-2838-dev.twil.io/landing.png"  alt="Twilio"  width="100%"  />
 </div>
 
 - The initial view that is loaded at the base URL
@@ -30,7 +30,7 @@ The application is broken down into four distinct stages of a typical video chat
 ### [Pre-Join Screen](/components/screens/PreJoinScreen/PreJoinScreen.tsx)
 
 <div style="width:100%; margin: 20px">
-<img  src="https://hosted-assets-2838-dev.twil.io/prejoin.png"  alt="Twilio"  width="90%"  />
+<img  src="https://hosted-assets-2838-dev.twil.io/prejoin.png"  alt="Twilio"  width="100%"  />
 </div>
 
 - Preview and configure local devices prior to joining the room
@@ -41,7 +41,7 @@ The application is broken down into four distinct stages of a typical video chat
 ### [Active Video Room Screen](/components/screens/ActiveVideoRoom/ActiveVideoRoom.tsx)
 
 <div style="width:100%; margin: 20px">
-<img  src="https://hosted-assets-2838-dev.twil.io/active-room.png"  alt="Twilio"  width="90%"  />
+<img  src="https://hosted-assets-2838-dev.twil.io/active-room.png"  alt="Twilio"  width="100%"  />
 </div>
 
 - Shown after the `Local Participant` successfully connects to the room
@@ -57,7 +57,7 @@ The application is broken down into four distinct stages of a typical video chat
 ### [Post-Video Room Screen](/components/screens/PostVideoRoom/PostVideoRoom.tsx)
 
 <div style="width:100%; margin: 20px">
-<img  src="https://hosted-assets-2838-dev.twil.io/post-room.png"  alt="Twilio"  width="90%"  />
+<img  src="https://hosted-assets-2838-dev.twil.io/post-room.png"  alt="Twilio"  width="100%"  />
 </div>
 
 - The screen that displays when a participant disconnects from the video room (either manually or due to error)
