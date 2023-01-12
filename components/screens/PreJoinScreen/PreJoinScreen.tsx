@@ -26,14 +26,21 @@ import TwilioHeading from "../../TwilioHeading/TwilioHeading";
 import VideoPreview from "./VideoPreview/VideoPreview";
 import PermissionCheck from "./PermissionCheck/PermissionCheck";
 import ConfigureSettings from "../../ConfigureSettings/ConfigureSettings";
+import { TEXT_COPY } from "../../../lib/constants";
 
 export default function PreJoinScreen() {
   const toaster = useToaster();
+  const { HELP_TEXT_PRELIGHT_FAILED, HELP_TEXT_PRELIGHT_PASSED } = TEXT_COPY;
   const formData = useVideoStore((state: VideoAppState) => state.formData);
-  const { localTracks, setLocalTracks, clearTrack, setActiveRoom, setUIStep, 
-      hasSkippedPermissionCheck, hasPassedPermissionCheck } = useVideoStore(
-    (state: VideoAppState) => state
-  );
+  const {
+    localTracks,
+    setLocalTracks,
+    clearTrack,
+    setActiveRoom,
+    setUIStep,
+    hasSkippedPermissionCheck,
+    hasPassedPermissionCheck,
+  } = useVideoStore((state: VideoAppState) => state);
   const { isMicPermissionGranted, isCameraPermissionGranted } = useDevices();
 
   const [micEnabled, setMicEnabled] = useState(false);
@@ -43,7 +50,7 @@ export default function PreJoinScreen() {
   const { roomName, identity } = formData;
   const { data, status: tokenStatus } = useGetToken(roomName, identity);
   const [loading, setLoading] = useState(false);
-  
+
   const joinVideoClicked = async () => {
     setLoading(true);
     let tracks = [];
@@ -216,127 +223,130 @@ export default function PreJoinScreen() {
         height="100%"
       >
         <TwilioHeading heading={`Video Room - ${formData.roomName}`} />
-        
         {
-          // Conditionally render Permission Check UI if either permissions have yet to be granted 
+          // Conditionally render Permission Check UI if either permissions have yet to be granted
           // (unless store is updated to indicate was skipped or passed)
-        (!hasSkippedPermissionCheck && !hasPassedPermissionCheck && !isMicPermissionGranted && !isCameraPermissionGranted) ? (
-          <PermissionCheck/>
-        ) : (
-          <MaxWidthDiv>
-            <Card paddingTop="space60">
-              <Stack orientation="vertical" spacing="space40">
-                <VideoPreview
-                  identity={identity ?? "Guest"}
-                  localVideo={localTracks.video}
-                />
-                <Flex hAlignContent={"center"}>
-                  <Switch
-                    checked={micEnabled}
-                    disabled={!isMicPermissionGranted}
-                    onChange={() => {
-                      microphoneToggle();
-                    }}
-                  >
-                    {micEnabled ? (
-                      <BsMicFill
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                          marginRight: "20px",
-                          color: "rgb(72, 221, 0)",
-                        }}
-                      />
-                    ) : (
-                      <BsMicMuteFill
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                          marginRight: "20px",
-                          color: "rgb(221, 39, 0)",
-                        }}
-                      />
-                    )}
-                  </Switch>
-                  <Switch
-                    checked={camEnabled}
-                    disabled={!isCameraPermissionGranted}
-                    onChange={() => {
-                      cameraToggle();
-                    }}
-                  >
-                    {camEnabled ? (
-                      <BsCameraVideoFill
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                          color: "rgb(72, 221, 0)",
-                        }}
-                      />
-                    ) : (
-                      <BsCameraVideoOff
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                          color: "rgb(221, 39, 0)",
-                        }}
-                      />
-                    )}
-                  </Switch>
-                </Flex>
-                <ConfigureSettings />
-                <Flex hAlignContent={"center"} width="100%">
-                  <Stack orientation="vertical" spacing="space30">
-                    <Flex
-                      hAlignContent={"center"}
-                      width="100%"
-                      marginTop="space30"
+          !hasSkippedPermissionCheck &&
+          !hasPassedPermissionCheck &&
+          !isMicPermissionGranted &&
+          !isCameraPermissionGranted ? (
+            <PermissionCheck />
+          ) : (
+            <MaxWidthDiv>
+              <Card paddingTop="space60">
+                <Stack orientation="vertical" spacing="space40">
+                  <VideoPreview
+                    identity={identity ?? "Guest"}
+                    localVideo={localTracks.video}
+                  />
+                  <Flex hAlignContent={"center"}>
+                    <Switch
+                      checked={micEnabled}
+                      disabled={!isMicPermissionGranted}
+                      onChange={() => {
+                        microphoneToggle();
+                      }}
                     >
-                      <Button
-                        variant="destructive"
-                        onClick={async () => await joinVideoClicked()}
-                        loading={loading}
-                        style={{ background: "#F22F46" }}
-                        disabled={preflightStatus !== "passed"}
-                      >
-                        {joinButtonText()}
-                      </Button>
-                    </Flex>
-                    {preflightStatus !== "failed" ? (
-                      <span
-                        style={{
-                          color: "#000000",
-                          lineHeight: 1,
-                          fontSize: "12px",
-                          letterSpacing: "wider",
-                          marginTop: "15px",
-                          textAlign: "center",
-                        }}
-                      >
-                        Click to join the video room!
-                      </span>
-                    ) : (
-                      <Flex marginTop="space20">
-                        <MdErrorOutline
+                      {micEnabled ? (
+                        <BsMicFill
                           style={{
                             width: "20px",
                             height: "20px",
-                            color: "rgb(221, 39, 0)",
-                            marginRight: "10px",
+                            marginRight: "20px",
+                            color: "rgb(72, 221, 0)",
                           }}
                         />
-                        <Text as="p" fontSize="fontSize20">
-                          Failed connectivity checks to Twilio Cloud - please
-                          check your network connection.
-                        </Text>
+                      ) : (
+                        <BsMicMuteFill
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            marginRight: "20px",
+                            color: "rgb(221, 39, 0)",
+                          }}
+                        />
+                      )}
+                    </Switch>
+                    <Switch
+                      checked={camEnabled}
+                      disabled={!isCameraPermissionGranted}
+                      onChange={() => {
+                        cameraToggle();
+                      }}
+                    >
+                      {camEnabled ? (
+                        <BsCameraVideoFill
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            color: "rgb(72, 221, 0)",
+                          }}
+                        />
+                      ) : (
+                        <BsCameraVideoOff
+                          style={{
+                            width: "20px",
+                            height: "20px",
+
+                            color: "rgb(221, 39, 0)",
+                          }}
+                        />
+                      )}
+                    </Switch>
+                  </Flex>
+                  <ConfigureSettings />
+                  <Flex hAlignContent={"center"} width="100%">
+                    <Stack orientation="vertical" spacing="space30">
+                      <Flex
+                        hAlignContent={"center"}
+                        width="100%"
+                        marginTop="space30"
+                      >
+                        <Button
+                          variant="destructive"
+                          onClick={async () => await joinVideoClicked()}
+                          loading={loading}
+                          style={{ background: "#F22F46" }}
+                          disabled={preflightStatus !== "passed"}
+                        >
+                          {joinButtonText()}
+                        </Button>
                       </Flex>
-                    )}
-                  </Stack>
-                </Flex>
-              </Stack>
-            </Card>
-          </MaxWidthDiv>
-        )}
+                      {preflightStatus !== "failed" ? (
+                        <span
+                          style={{
+                            color: "#000000",
+                            lineHeight: 1,
+                            fontSize: "12px",
+                            letterSpacing: "wider",
+                            marginTop: "15px",
+                            textAlign: "center",
+                          }}
+                        >
+                          {HELP_TEXT_PRELIGHT_PASSED}
+                        </span>
+                      ) : (
+                        <Flex marginTop="space20">
+                          <MdErrorOutline
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                              color: "rgb(221, 39, 0)",
+                              marginRight: "10px",
+                            }}
+                          />
+                          <Text as="p" fontSize="fontSize20">
+                            {HELP_TEXT_PRELIGHT_FAILED}
+                          </Text>
+                        </Flex>
+                      )}
+                    </Stack>
+                  </Flex>
+                </Stack>
+              </Card>
+            </MaxWidthDiv>
+          )
+        }
         <Toaster {...toaster} />
       </Flex>
     </CenterContent>

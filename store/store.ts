@@ -25,8 +25,14 @@ interface LocalTracks {
   data: Video.LocalDataTrack | undefined;
 }
 
+interface DisconnectError {
+  code: number;
+  message: string;
+}
+
 export interface VideoAppState {
   room: Video.Room | null;
+  disconnectError: DisconnectError | null;
   status: RoomStatus;
   uiStep: UIStep;
   formData: LandingPageFormData;
@@ -36,6 +42,7 @@ export interface VideoAppState {
   setFormData: (data: LandingPageFormData) => void;
   setUIStep: (step: UIStep) => void;
   setActiveRoom: (room: Video.Room) => void;
+  setDisconnectError: (code: number, message: string) => void;
   clearActiveRoom: () => void;
   setHasSkippedPermissionCheck: (hasSkipped : boolean) => void;
   setHasPassedPermissionCheck: (hasPassed : boolean) => void;
@@ -50,6 +57,7 @@ export interface VideoAppState {
 
 export const useVideoStore = create<VideoAppState>()((set, get) => ({
   room: null,
+  disconnectError: null,
   status: RoomStatus.NOT_CONNECTED,
   uiStep: UIStep.LANDING_SCREEN,
   formData: {
@@ -94,9 +102,12 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
   setFormData: (data: LandingPageFormData) => set({ formData: data }),
   setUIStep: (step: UIStep) => set({ uiStep: step }),
   setActiveRoom: (activeRoom: Video.Room) => set({ room: activeRoom }),
+  setDisconnectError: (code: number, message: string) =>
+    set({ disconnectError: { code, message } }),
   clearActiveRoom: () =>
     set({
       room: null,
+      disconnectError: null,
       localTracks: {
         audio: undefined,
         video: undefined,
@@ -107,8 +118,15 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
   resetState: () => {
     set({
       room: null,
+      disconnectError: null,
       status: RoomStatus.NOT_CONNECTED,
       uiStep: UIStep.LANDING_SCREEN,
+      localTracks: {
+        audio: undefined,
+        video: undefined,
+        screen: undefined,
+        data: undefined,
+      },
       formData: {
         identity: undefined,
         roomName: undefined,

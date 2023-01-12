@@ -25,11 +25,14 @@ import useDevices from "../../lib/hooks/useDevices";
 import VideoPreview from "../screens/PreJoinScreen/VideoPreview/VideoPreview";
 import { useVideoStore, VideoAppState } from "../../store/store";
 import { findDeviceByID } from "../../lib/utils/devices";
+import { TEXT_COPY } from "../../lib/constants";
 
 interface ConfigureSettingsProps {}
 
 export default function ConfigureSettings({}: ConfigureSettingsProps) {
   const toaster = useToaster();
+  const { CONFIGURE_SETTINGS_HEADER, CONFIGURE_SETTINGS_DESCRIPTION } =
+    TEXT_COPY;
   const { localTracks, setLocalTracks, formData, clearTrack } = useVideoStore(
     (state: VideoAppState) => state
   );
@@ -96,11 +99,11 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
       >
         <ModalHeader>
           <ModalHeading as="h3" id={modalHeadingID}>
-            Audio & Video Settings
+            {CONFIGURE_SETTINGS_HEADER}
           </ModalHeading>
         </ModalHeader>
         <ModalBody>
-          <Paragraph>Configure your audio and video settings.</Paragraph>
+          <Paragraph>{CONFIGURE_SETTINGS_DESCRIPTION}</Paragraph>
           <Stack orientation={"vertical"} spacing="space60">
             {isCameraPermissionGranted &&
               <VideoPreview
