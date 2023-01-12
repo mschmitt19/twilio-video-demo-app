@@ -46,7 +46,7 @@ export const InnerPreviewContainer = styled.div(
 export const CenterContent = styled.div(
   css({
     paddingX: "space40",
-    paddingTop: "space200",
+    paddingTop: "space160",
     paddingBottom: "space60",
     width: "100%",
     minHeight: "100vh",

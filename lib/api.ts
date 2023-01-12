@@ -11,6 +11,28 @@ export const getAccessToken = async (
   return data;
 };
 
+export const shipRoomStats = async (roomStats: any) => {
+  await axios
+    .post(`${process.env.NEXT_PUBLIC_LOGGING_ENDPOINT}`, { data: roomStats })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+};
+
+export const shipSurveyFeedback = async (feedback: any) => {
+  await axios
+    .post(`${process.env.NEXT_PUBLIC_SURVEY_ENDPOINT}`, feedback)
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+};
+
 export const useGetToken = (
   roomName: string | undefined,
   identity?: string | undefined
