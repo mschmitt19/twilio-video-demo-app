@@ -30,18 +30,23 @@ export interface VideoAppState {
   status: RoomStatus;
   uiStep: UIStep;
   formData: LandingPageFormData;
+  hasSkippedPermissionCheck: boolean;
+  hasPassedPermissionCheck: boolean;
   localTracks: LocalTracks;
   setFormData: (data: LandingPageFormData) => void;
   setUIStep: (step: UIStep) => void;
   setActiveRoom: (room: Video.Room) => void;
   clearActiveRoom: () => void;
+  setHasSkippedPermissionCheck: (hasSkipped : boolean) => void;
+  setHasPassedPermissionCheck: (hasPassed : boolean) => void;
   setLocalTracks: (
     type: "audio" | "video" | "screen",
     track: Video.LocalAudioTrack | Video.LocalVideoTrack | Video.LocalDataTrack
   ) => void;
   clearTrack: (type: "audio" | "video" | "screen") => void;
   resetState: () => void;
-}
+}  
+
 
 export const useVideoStore = create<VideoAppState>()((set, get) => ({
   room: null,
@@ -51,12 +56,17 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
     identity: undefined,
     roomName: undefined,
   },
+  hasSkippedPermissionCheck: false, 
+  hasPassedPermissionCheck: false,
   localTracks: {
     audio: undefined,
     video: undefined,
     screen: undefined,
     data: undefined,
   },
+  setHasSkippedPermissionCheck: (hasSkipped: boolean) => set({ hasSkippedPermissionCheck: hasSkipped }),
+  setHasPassedPermissionCheck: (hasPassed: boolean) => set({ hasPassedPermissionCheck: hasPassed }),
+
   setLocalTracks: (type, track: any) => {
     const currentTracks = get().localTracks;
     if (type === "audio") {

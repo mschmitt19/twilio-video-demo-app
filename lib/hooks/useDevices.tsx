@@ -13,6 +13,8 @@ export default function useDevices() {
     audioOutputDevices: [],
     hasAudioInputDevices: false,
     hasVideoInputDevices: false,
+    isMicPermissionGranted: false,
+    isCameraPermissionGranted: false
   });
 
   useEffect(() => {
