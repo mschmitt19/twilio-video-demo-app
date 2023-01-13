@@ -4,7 +4,12 @@ import { getDeviceInfo } from "../utils/devices";
 // This returns the type of the value that is returned by a promise resolution
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : never;
 
-export default function useDevices() {
+interface InitialPermissions {
+  camera: boolean;
+  microphone: boolean;
+}
+
+export default function useDevices({ camera, microphone }: InitialPermissions) {
   const [deviceInfo, setDeviceInfo] = useState<
     ThenArg<ReturnType<typeof getDeviceInfo>>
   >({
@@ -14,7 +19,7 @@ export default function useDevices() {
     hasAudioInputDevices: false,
     hasVideoInputDevices: false,
     isMicPermissionGranted: false,
-    isCameraPermissionGranted: false
+    isCameraPermissionGranted: false,
   });
 
   useEffect(() => {
@@ -26,7 +31,7 @@ export default function useDevices() {
     return () => {
       navigator.mediaDevices.removeEventListener("devicechange", getDevices);
     };
-  }, []);
+  }, [camera, microphone]);
 
   return deviceInfo;
 }

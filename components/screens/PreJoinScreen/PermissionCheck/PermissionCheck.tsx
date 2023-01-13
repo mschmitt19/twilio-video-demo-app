@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Flex,
@@ -7,6 +7,7 @@ import {
   Card,
   Text,
   Heading,
+  Stack,
 } from "@twilio-paste/core";
 
 import { useVideoStore, VideoAppState } from "../../../../store/store";
@@ -16,65 +17,85 @@ interface PermissionCheckProps {}
 
 export default function PermissionCheck({}: PermissionCheckProps) {
   const toaster = useToaster();
-  const { hasSkippedPermissionCheck, setHasSkippedPermissionCheck, 
-        hasPassedPermissionCheck, setHasPassedPermissionCheck } = useVideoStore(
+  const { setHasSkippedPermissionCheck, setDevicePermissions } = useVideoStore(
     (state: VideoAppState) => state
   );
+  const [isChecking, setIsChecking] = useState<boolean>(false);
 
   const handleSkip = () => {
     setHasSkippedPermissionCheck(true);
-  }
-  
+  };
+
   async function requestPermissions() {
+    setIsChecking(true);
     try {
       // get audio and video permissions then stop the tracks
-      await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(async (mediaStream) => {
-        mediaStream.getTracks().forEach((track) => {
-          track.stop();
+      await navigator.mediaDevices
+        .getUserMedia({ audio: true, video: true })
+        .then(async (mediaStream) => {
+          mediaStream.getTracks().forEach((track) => {
+            track.stop();
+          });
         });
-      });
       // The devicechange event is not fired after permissions are granted, so we fire it
       // ourselves to update the useDevices hook. The 500 ms delay is needed so that device labels are available
       // when the useDevices hook updates.
-      setTimeout(() => navigator.mediaDevices.dispatchEvent(new Event('devicechange')), 500);
-      setHasPassedPermissionCheck(true);
+      setTimeout(
+        () => navigator.mediaDevices.dispatchEvent(new Event("devicechange")),
+        500
+      );
+
+      // At this point we know they have approved permissions
+      setDevicePermissions("camera", true);
+      setDevicePermissions("microphone", true);
+      setHasSkippedPermissionCheck(true);
+      setIsChecking(false);
     } catch (error: any) {
-      console.log("Error requesting permission", error);
+      // Permission denied or dismissed..
       toaster.push({
         message: `Error requesting permission to camera and mic: ${error.message}`,
         variant: "error",
       });
+      console.log("Error requesting permission", error);
+      setHasSkippedPermissionCheck(true);
+      setIsChecking(false);
     }
   }
 
-  return (  
-    !hasSkippedPermissionCheck && !hasPassedPermissionCheck ? (
-      <>
-        <MaxWidthDiv>
-          <Card>
-            <Heading as="h4" variant="heading40">
-              Browser Permissions Needed
-            </Heading>
-            <Text
-              as="p"
-              fontSize="fontSize20"
-              fontWeight="fontWeightMedium"
-              color="colorText"
-            >
-              To have a video call, please give us access to your camera and microphone.
-            </Text>
-            <Flex marginTop={"space60"}>
-              <Button variant="primary" onClick={requestPermissions}>
-                Give access to use camera and mic
+  return (
+    <>
+      <MaxWidthDiv>
+        <Card>
+          <Heading as="h4" variant="heading40">
+            Browser Permissions Needed
+          </Heading>
+          <Text
+            as="p"
+            fontSize="fontSize20"
+            fontWeight="fontWeightMedium"
+            color="colorText"
+          >
+            To actively participate in the video call, this application will
+            need permission to access your camera and microphone. After
+            acknowledgement, the browser will request permission.
+          </Text>
+          <Flex marginTop={"space60"} grow hAlignContent={"center"}>
+            <Stack orientation={"horizontal"} spacing="space30">
+              <Button
+                variant="primary"
+                onClick={requestPermissions}
+                loading={isChecking}
+              >
+                Understood
               </Button>
               <Button variant="secondary" onClick={handleSkip}>
-                Continue without camera and mic
+                Skip
               </Button>
-            </Flex>
-          </Card>
-        </MaxWidthDiv>
-        <Toaster {...toaster} />
-      </>
-    ) : (null)
+            </Stack>
+          </Flex>
+        </Card>
+      </MaxWidthDiv>
+      <Toaster {...toaster} />
+    </>
   );
 }

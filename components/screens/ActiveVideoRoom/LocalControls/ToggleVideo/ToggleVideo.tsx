@@ -9,10 +9,9 @@ import { useVideoStore, VideoAppState } from "../../../../../store/store";
 export default function ToggleVideo() {
   const toaster = useToaster();
   const [isPublishing, setIsPublishing] = useState(false);
-  const { localTracks, room, clearTrack, setLocalTracks } = useVideoStore(
-    (state: VideoAppState) => state
-  );
-  const { hasVideoInputDevices } = useDevices();
+  const { localTracks, room, clearTrack, setLocalTracks, devicePermissions } =
+    useVideoStore((state: VideoAppState) => state);
+  const { hasVideoInputDevices } = useDevices(devicePermissions);
 
   const toggleVideo = () => {
     if (!isPublishing) {
@@ -47,7 +46,7 @@ export default function ToggleVideo() {
           .catch((error) => {
             console.log("error", error.message);
             toaster.push({
-              message: `Error joining room - ${error.message}`,
+              message: `Error enabling Camera - ${error.message}`,
               variant: "error",
             });
           });
