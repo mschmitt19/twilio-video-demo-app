@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as Video from "twilio-video";
 import {
   Button,
@@ -33,9 +33,13 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
   const toaster = useToaster();
   const { CONFIGURE_SETTINGS_HEADER, CONFIGURE_SETTINGS_DESCRIPTION } =
     TEXT_COPY;
-  const { localTracks, setLocalTracks, formData, clearTrack } = useVideoStore(
-    (state: VideoAppState) => state
-  );
+  const {
+    localTracks,
+    setLocalTracks,
+    formData,
+    clearTrack,
+    devicePermissions,
+  } = useVideoStore((state: VideoAppState) => state);
   const localVideo = localTracks.video;
   const { identity } = formData;
 
@@ -44,7 +48,7 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
   const handleClose = () => setIsOpen(false);
   const modalHeadingID = useUID();
   const { videoInputDevices, audioInputDevices, audioOutputDevices } =
-    useDevices();
+    useDevices(devicePermissions);
 
   function deviceChange(
     deviceID: string,
@@ -59,7 +63,7 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
     const device = findDeviceByID(deviceID, deviceList);
     console.log(`changed ${type} to `, device?.label);
 
-    /* NEED TO ADD IN DEVICE CONFIGURATION SWITCHING FOR AUDIO INPUT & OUTPUT */
+    /* TODO: NEED TO ADD IN DEVICE CONFIGURATION SWITCHING FOR AUDIO INPUT & OUTPUT */
     if (type === "video" && localVideo?.mediaStreamTrack.id !== deviceID) {
       localVideo?.stop();
       clearTrack("video");
@@ -80,6 +84,11 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
         });
     }
   }
+
+  useEffect(() => {
+    console.log("useEffect > ConfigureSettings");
+    console.log("devicePermissions", devicePermissions);
+  }, [devicePermissions]);
 
   return (
     <Flex hAlignContent={"center"} width="100%">
@@ -105,14 +114,16 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
         <ModalBody>
           <Paragraph>{CONFIGURE_SETTINGS_DESCRIPTION}</Paragraph>
           <Stack orientation={"vertical"} spacing="space60">
-            <VideoPreview
-              identity={identity ?? "Guest"}
-              localVideo={localVideo}
-            />
+            {devicePermissions.camera && (
+              <VideoPreview
+                identity={identity ?? "Guest"}
+                localVideo={localVideo}
+              />
+            )}
             <Stack orientation="vertical" spacing="space30">
               <Label htmlFor="author">
                 Video{" "}
-                {localVideo === undefined
+                {devicePermissions.camera && localVideo === undefined
                   ? "(disabled)"
                   : localVideo?.isStopped
                   ? "(stopped)"
@@ -121,18 +132,29 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
               <Select
                 id="author"
                 onChange={(e) => deviceChange(e.target.value, "video")}
-                defaultValue={localVideo?.mediaStreamTrack.id ?? ""}
+                defaultValue={
+                  devicePermissions.camera
+                    ? localVideo?.mediaStreamTrack.id ?? ""
+                    : "no-cam-permission"
+                }
                 disabled={
-                  localVideo === undefined ||
-                  localVideo?.isStopped ||
-                  videoInputDevices.length < 2
+                  videoInputDevices.length < 2 || !devicePermissions.camera
                 }
               >
-                {videoInputDevices.map((videoInput: MediaDeviceInfo) => (
-                  <Option key={videoInput.deviceId} value={videoInput.deviceId}>
-                    {videoInput.label}
+                {devicePermissions.camera ? (
+                  videoInputDevices.map((videoInput: MediaDeviceInfo) => (
+                    <Option
+                      key={videoInput.deviceId}
+                      value={videoInput.deviceId}
+                    >
+                      {videoInput.label}
+                    </Option>
+                  ))
+                ) : (
+                  <Option key="no-cam-permission" value="no-cam-permission">
+                    Camera permissions have not been granted in the browser
                   </Option>
-                ))}
+                )}
               </Select>
             </Stack>
             <Stack orientation="vertical" spacing="space30">
@@ -140,12 +162,27 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
               <Select
                 id="author"
                 onChange={(e) => deviceChange(e.target.value, "audioInput")}
+                defaultValue={
+                  devicePermissions.microphone ? "" : "no-mic-permission"
+                }
+                disabled={
+                  audioInputDevices.length < 2 || !devicePermissions.microphone
+                }
               >
-                {audioInputDevices.map((audioInput: MediaDeviceInfo) => (
-                  <Option key={audioInput.deviceId} value={audioInput.deviceId}>
-                    {audioInput.label}
+                {devicePermissions.microphone ? (
+                  audioInputDevices.map((audioInput: MediaDeviceInfo) => (
+                    <Option
+                      key={audioInput.deviceId}
+                      value={audioInput.deviceId}
+                    >
+                      {audioInput.label}
+                    </Option>
+                  ))
+                ) : (
+                  <Option key="no-mic-permission" value="no-mic-permission">
+                    Microphone permissions have not been granted in the browser
                   </Option>
-                ))}
+                )}
               </Select>
             </Stack>
             <Stack orientation="vertical" spacing="space30">
@@ -154,14 +191,20 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
                 id="author"
                 onChange={(e) => deviceChange(e.target.value, "audioOutput")}
               >
-                {audioOutputDevices.map((audioOutput: MediaDeviceInfo) => (
-                  <Option
-                    key={audioOutput.deviceId}
-                    value={audioOutput.deviceId}
-                  >
-                    {audioOutput.label}
+                {devicePermissions.microphone ? (
+                  audioOutputDevices.map((audioOutput: MediaDeviceInfo) => (
+                    <Option
+                      key={audioOutput.deviceId}
+                      value={audioOutput.deviceId}
+                    >
+                      {audioOutput.label}
+                    </Option>
+                  ))
+                ) : (
+                  <Option key="no-mic-permission" value="no-mic-permission">
+                    Microphone permissions have not been granted in the browser
                   </Option>
-                ))}
+                )}
               </Select>
             </Stack>
           </Stack>

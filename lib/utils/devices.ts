@@ -1,6 +1,6 @@
 // This function will return 'true' when the specified permission has been denied by the user.
 // If the API doesn't exist, or the query function returns an error, 'false' will be returned.
-export async function isPermissionDenied(name: "camera" | "microphone") {
+export async function getPermissionStatus(name: "camera" | "microphone") {
   const permissionName = name as PermissionName; // workaround for https://github.com/microsoft/TypeScript/issues/33923
 
   if (navigator.permissions) {
@@ -8,12 +8,12 @@ export async function isPermissionDenied(name: "camera" | "microphone") {
       const result = await navigator.permissions.query({
         name: permissionName,
       });
-      return result.state === "denied";
+      return result;
     } catch {
-      return false;
+      return null;
     }
   } else {
-    return false;
+    return null;
   }
 }
 
@@ -31,6 +31,12 @@ export async function getDeviceInfo() {
     hasVideoInputDevices: devices.some(
       (device) => device.kind === "videoinput"
     ),
+    isMicPermissionGranted: devices
+      .filter((device) => device.kind === "audioinput")
+      .every((d: MediaDeviceInfo) => d.label),
+    isCameraPermissionGranted: devices
+      .filter((device) => device.kind === "videoinput")
+      .every((d: MediaDeviceInfo) => d.label),
   };
 }
 
