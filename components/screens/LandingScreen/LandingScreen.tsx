@@ -21,6 +21,7 @@ import { CenterContent, MaxWidthDiv } from "../../styled";
 import TwilioHeading from "../../TwilioHeading/TwilioHeading";
 import { useVideoStore, VideoAppState, UIStep } from "../../../store/store";
 import { TEXT_COPY } from "../../../lib/constants";
+import { getPermissionStatus } from "../../../lib/utils/devices";
 
 const formSchema = yup
   .object({
@@ -33,10 +34,10 @@ export default function LandingScreen({}) {
   const router = useRouter();
   const [roomNameDisabled, setRoomNameDisabled] = useState(false);
   const { ROOM_NAME_INPUT_DISABLED, ROOM_NAME_INPUT_ENABLED } = TEXT_COPY;
-  const setUIStep = useVideoStore((state: VideoAppState) => state.setUIStep);
-  const setFormData = useVideoStore(
-    (state: VideoAppState) => state.setFormData
+  const { setUIStep, setFormData, setDevicePermissions } = useVideoStore(
+    (state: VideoAppState) => state
   );
+
   const {
     register,
     handleSubmit,
@@ -56,6 +57,7 @@ export default function LandingScreen({}) {
     setUIStep(UIStep.PRE_JOIN_SCREEN);
   };
 
+  // Runs to check if the roomName parameter is pre-populated in the URL
   useEffect(() => {
     const { roomName } = router.query;
     // Joining with an invite link, pre-populate input field and disable
@@ -64,6 +66,18 @@ export default function LandingScreen({}) {
       setRoomNameDisabled(true);
     }
   }, [router]);
+
+  // Check current state of permissons immediately
+  useEffect(() => {
+    getPermissionStatus("camera").then((result) => {
+      const enabled = result?.state === "granted" ? true : false;
+      setDevicePermissions("camera", enabled);
+    });
+    getPermissionStatus("microphone").then((result) => {
+      const enabled = result?.state === "granted" ? true : false;
+      setDevicePermissions("microphone", enabled);
+    });
+  }, []);
 
   return (
     <CenterContent>

@@ -11,7 +11,7 @@ export default function RoomInfo({ roomName, numParticipants }: RoomInfoProps) {
     <MediaObject as="div" verticalAlign="center">
       <MediaFigure as="div" spacing="space30">
         <img
-          src="https://hosted-assets-2838-dev.twil.io/twilio.png"
+          src="https://hosted-assets-2838-dev.twil.io/twl-vid.png"
           height="28px"
         />
       </MediaFigure>

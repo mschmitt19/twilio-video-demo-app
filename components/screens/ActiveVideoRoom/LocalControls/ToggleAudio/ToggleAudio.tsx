@@ -8,9 +8,8 @@ import useIsTrackEnabled from "../../../../../lib/hooks/useIsTrackEnabled";
 
 export default function ToggleAudio() {
   const toaster = useToaster();
-  const { localTracks, setLocalTracks, room } = useVideoStore(
-    (state: VideoAppState) => state
-  );
+  const { localTracks, setLocalTracks, room, setDevicePermissions } =
+    useVideoStore((state: VideoAppState) => state);
   const audioTrack = localTracks.audio;
   const isEnabled = useIsTrackEnabled(audioTrack);
 
@@ -34,13 +33,15 @@ export default function ToggleAudio() {
           console.log("localTracks...", localTracks);
           room?.localParticipant?.publishTrack(localTracks[0]);
           setLocalTracks("audio", localTracks[0]);
+          setDevicePermissions("camera", true);
         })
         .catch((error) => {
           console.log("error", error.message);
           toaster.push({
-            message: `Error joining room - ${error.message}`,
+            message: `Error starting microphone - ${error.message}`,
             variant: "error",
           });
+          setDevicePermissions("camera", false);
         });
     }
   };

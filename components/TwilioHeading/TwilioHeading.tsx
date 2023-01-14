@@ -10,7 +10,7 @@ export default function TwilioHeading({ heading }: TwilioHeadingProps) {
     <MediaObject as="div" verticalAlign="center" marginBottom={"space40"}>
       <MediaFigure as="div" spacing="space40">
         <img
-          src="https://hosted-assets-2838-dev.twil.io/twilio.png"
+          src="https://hosted-assets-2838-dev.twil.io/twl-vid.png"
           height="40px"
         />
       </MediaFigure>

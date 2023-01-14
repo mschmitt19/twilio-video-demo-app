@@ -30,18 +30,30 @@ interface DisconnectError {
   message: string;
 }
 
+interface PermissionsState {
+  camera: boolean;
+  microphone: boolean;
+}
+
 export interface VideoAppState {
   room: Video.Room | null;
   disconnectError: DisconnectError | null;
   status: RoomStatus;
   uiStep: UIStep;
   formData: LandingPageFormData;
+  devicePermissions: PermissionsState;
+  hasSkippedPermissionCheck: boolean;
   localTracks: LocalTracks;
+  setDevicePermissions: (
+    device: "camera" | "microphone",
+    enabled: boolean
+  ) => void;
   setFormData: (data: LandingPageFormData) => void;
   setUIStep: (step: UIStep) => void;
   setActiveRoom: (room: Video.Room) => void;
   setDisconnectError: (code: number, message: string) => void;
   clearActiveRoom: () => void;
+  setHasSkippedPermissionCheck: (hasSkipped: boolean) => void;
   setLocalTracks: (
     type: "audio" | "video" | "screen",
     track: Video.LocalAudioTrack | Video.LocalVideoTrack | Video.LocalDataTrack
@@ -59,11 +71,29 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
     identity: undefined,
     roomName: undefined,
   },
+  devicePermissions: {
+    camera: false,
+    microphone: false,
+  },
+  hasSkippedPermissionCheck: false,
   localTracks: {
     audio: undefined,
     video: undefined,
     screen: undefined,
     data: undefined,
+  },
+  setHasSkippedPermissionCheck: (hasSkipped: boolean) =>
+    set({ hasSkippedPermissionCheck: hasSkipped }),
+  setDevicePermissions: (device: "camera" | "microphone", enabled: boolean) => {
+    const currentPermissions = get().devicePermissions;
+    if (device === "camera") {
+      set({ devicePermissions: { ...currentPermissions, camera: enabled } });
+    }
+    if (device === "microphone") {
+      set({
+        devicePermissions: { ...currentPermissions, microphone: enabled },
+      });
+    }
   },
   setLocalTracks: (type, track: any) => {
     const currentTracks = get().localTracks;
@@ -98,6 +128,11 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
     set({
       room: null,
       disconnectError: null,
+      hasSkippedPermissionCheck: false,
+      devicePermissions: {
+        camera: false,
+        microphone: false,
+      },
       localTracks: {
         audio: undefined,
         video: undefined,
@@ -111,6 +146,11 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
       disconnectError: null,
       status: RoomStatus.NOT_CONNECTED,
       uiStep: UIStep.LANDING_SCREEN,
+      hasSkippedPermissionCheck: false,
+      devicePermissions: {
+        camera: false,
+        microphone: false,
+      },
       localTracks: {
         audio: undefined,
         video: undefined,
