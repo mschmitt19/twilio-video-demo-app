@@ -25,7 +25,7 @@ export default function ToggleVideo() {
         room?.localParticipant?.emit("trackUnpublished", localTrackPublication);
       } else {
         setIsPublishing(true);
-        console.log("setup local video track");
+        // setup local video track
         navigator.mediaDevices
           .enumerateDevices()
           .then((devices) => {
@@ -38,13 +38,11 @@ export default function ToggleVideo() {
             });
           })
           .then((localTracks) => {
-            console.log("localTracks...", localTracks);
             room?.localParticipant?.publishTrack(localTracks[0]);
             setLocalTracks("video", localTracks[0]);
             setIsPublishing(false);
           })
           .catch((error) => {
-            console.log("error", error.message);
             toaster.push({
               message: `Error enabling Camera - ${error.message}`,
               variant: "error",

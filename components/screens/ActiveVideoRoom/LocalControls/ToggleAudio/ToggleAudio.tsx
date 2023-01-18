@@ -17,7 +17,7 @@ export default function ToggleAudio() {
     if (audioTrack) {
       audioTrack.isEnabled ? audioTrack.disable() : audioTrack.enable();
     } else {
-      console.log("setup local audio track");
+      // setup local audio track
       navigator.mediaDevices
         .enumerateDevices()
         .then((devices) => {
@@ -30,13 +30,11 @@ export default function ToggleAudio() {
           });
         })
         .then((localTracks) => {
-          console.log("localTracks...", localTracks);
           room?.localParticipant?.publishTrack(localTracks[0]);
           setLocalTracks("audio", localTracks[0]);
           setDevicePermissions("camera", true);
         })
         .catch((error) => {
-          console.log("error", error.message);
           toaster.push({
             message: `Error starting microphone - ${error.message}`,
             variant: "error",
