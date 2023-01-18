@@ -71,7 +71,7 @@ export const OverlayContent = styled.div(
   })
 );
 const CONTAINER_GUTTER = "30px";
-export const ParticipantContainer = styled.div(
+export const GridViewContainer = styled.div(
   css({
     height: "calc(100vh - 160px)",
     position: "absolute",
@@ -80,6 +80,34 @@ export const ParticipantContainer = styled.div(
     right: CONTAINER_GUTTER,
     bottom: CONTAINER_GUTTER,
     left: CONTAINER_GUTTER,
+    margin: "0 auto",
+    alignContent: "center",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  })
+);
+
+const FOCUSED_CONTAINER_GUTTER = "15px";
+export const FocusedTrackViewContainer = styled.div(
+  css({
+    height: "calc(100vh - 160px)",
+    position: "absolute",
+    display: "flex",
+    top: FOCUSED_CONTAINER_GUTTER,
+    right: FOCUSED_CONTAINER_GUTTER,
+    bottom: FOCUSED_CONTAINER_GUTTER,
+    left: FOCUSED_CONTAINER_GUTTER,
+    margin: "0 auto",
+    alignContent: "center",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  })
+);
+
+export const ParticipantListContainer = styled.div(
+  css({
+    height: "100%",
+    display: "flex",
     margin: "0 auto",
     alignContent: "center",
     flexWrap: "wrap",

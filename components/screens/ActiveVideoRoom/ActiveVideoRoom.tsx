@@ -3,25 +3,17 @@ import { Flex, Stack } from "@twilio-paste/core";
 import * as Video from "twilio-video";
 
 import { UIStep, useVideoStore, VideoAppState } from "../../../store/store";
-import {
-  ActiveVideoRoomContainer,
-  FooterDiv,
-  ParticipantContainer,
-} from "../../styled";
-import Participant from "./Participant/Participant";
+import { ActiveVideoRoomContainer, FooterDiv } from "../../styled";
 import ConfigureSettings from "../../ConfigureSettings/ConfigureSettings";
 import ToggleVideo from "./LocalControls/ToggleVideo/ToggleVideo";
 import ToggleAudio from "./LocalControls/ToggleAudio/ToggleAudio";
 import ToggleScreenshare from "./LocalControls/ToggleScreenshare/ToggleScreenshare";
 import LeaveRoom from "./LocalControls/LeaveRoom/LeaveRoom";
 import RoomInfo from "./RoomInfo/RoomInfo";
-import {
-  GALLERY_VIEW_ASPECT_RATIO,
-  GALLERY_VIEW_MARGIN,
-} from "../../../lib/constants";
-import useGalleryViewLayout from "../../../lib/hooks/useGalleryViewLayout";
 import { shipRoomStats } from "../../../lib/api";
-// import HiddenWhen from "../../HiddenWhen/HiddenWhen";
+import useScreenShareParticipant from "../../../lib/hooks/useScreenShareParticipant";
+import GridView from "./GridView/GridView";
+import FocusedTrackView from "./FocusedTrackView/FocusedTrackView";
 
 interface OrderedParticipant {
   participant: Video.RemoteParticipant;
@@ -41,17 +33,7 @@ export default function ActiveVideoRoom({}) {
       dominantSpeakerStartTime: 0,
     }))
   );
-
-  const numParticipants =
-    orderedParticipants.length > 0 ? orderedParticipants.length + 1 : 1;
-  const { participantVideoWidth, containerRef } =
-    useGalleryViewLayout(numParticipants);
-  const participantWidth = `${participantVideoWidth}px`;
-  const participantHeight = `${Math.floor(
-    participantVideoWidth * GALLERY_VIEW_ASPECT_RATIO
-  )}px`;
-  console.log("orderedParticipants", orderedParticipants);
-  console.log("room.localParticipant", room?.localParticipant);
+  const screenShareParticipant = useScreenShareParticipant(room);
 
   useEffect(() => {
     if (room) {
@@ -133,43 +115,19 @@ export default function ActiveVideoRoom({}) {
 
   return (
     <ActiveVideoRoomContainer>
-      <ParticipantContainer ref={containerRef}>
-        {orderedParticipants.length > 0 &&
-          orderedParticipants.map((remoteParticipant: OrderedParticipant) => {
-            const isDominant = !!dominantSpeaker
-              ? dominantSpeaker.sid === remoteParticipant.participant.sid
-              : false;
-            return (
-              <div
-                key={remoteParticipant.participant.sid}
-                style={{
-                  width: participantWidth,
-                  height: participantHeight,
-                  margin: GALLERY_VIEW_MARGIN,
-                }}
-              >
-                <Participant
-                  participant={remoteParticipant.participant}
-                  isLocalParticipant={false}
-                  isDominantSpeaker={isDominant}
-                />
-              </div>
-            );
-          })}
-        <div
-          key={room!.localParticipant.sid}
-          style={{
-            width: participantWidth,
-            height: participantHeight,
-            margin: GALLERY_VIEW_MARGIN,
-          }}
-        >
-          <Participant
-            participant={room!.localParticipant}
-            isLocalParticipant
-          />
-        </div>
-      </ParticipantContainer>
+      {!!screenShareParticipant &&
+      screenShareParticipant !== room?.localParticipant ? (
+        <FocusedTrackView
+          orderedParticipants={orderedParticipants}
+          dominantSpeaker={dominantSpeaker}
+          screenShareParticipant={screenShareParticipant}
+        />
+      ) : (
+        <GridView
+          orderedParticipants={orderedParticipants}
+          dominantSpeaker={dominantSpeaker}
+        />
+      )}
       <FooterDiv>
         <Flex width="100%" height="100%" vAlignContent="center">
           {/* <HiddenWhen> */}

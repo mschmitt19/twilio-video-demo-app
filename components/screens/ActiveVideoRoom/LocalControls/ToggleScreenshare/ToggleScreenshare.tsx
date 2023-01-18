@@ -1,52 +1,43 @@
-import React, { useState } from "react";
-import * as Video from "twilio-video";
+import React from "react";
 import { Tooltip, Button, useToaster, Toaster } from "@twilio-paste/core";
 import { TbScreenShare, TbScreenShareOff } from "react-icons/tb";
 import { useVideoStore, VideoAppState } from "../../../../../store/store";
+import useScreenShareParticipant from "../../../../../lib/hooks/useScreenShareParticipant";
+import useScreenShareToggle from "../../../../../lib/hooks/useScreenShareToggle";
 
 export default function ToggleScreenshare() {
   const toaster = useToaster();
-  const [isSharing, setIsSharing] = useState(false);
-  const { localTracks, room, clearTrack, setLocalTracks } = useVideoStore(
-    (state: VideoAppState) => state
-  );
-  const toggleScreenshare = () => {
-    if (localTracks.screen) {
-      // stop the screenshare
-      localTracks.screen.stop();
-      room?.localParticipant.unpublishTrack(localTracks.screen);
-      clearTrack("screen");
-    } else {
-      // start the screenshare
-      navigator.mediaDevices
-        .getDisplayMedia()
-        .then((stream) => {
-          let newScreenTrack = new Video.LocalVideoTrack(stream.getTracks()[0]);
-          room?.localParticipant.publishTrack(newScreenTrack);
-          setLocalTracks("screen", newScreenTrack);
-        })
-        .catch(() => {
-          toaster.push({
-            message: `Could not share screen - please try again.`,
-            variant: "error",
-          });
-        });
-    }
-    setIsSharing(!isSharing);
-  };
+  const { room } = useVideoStore((state: VideoAppState) => state);
+  const screenShareParticipant = useScreenShareParticipant(room);
+  const isScreenShareLocal =
+    !!screenShareParticipant &&
+    screenShareParticipant === room?.localParticipant;
+  const [isSharing, toggleScreenShare] = useScreenShareToggle(room, () => {
+    toaster.push({
+      message: `Could not share screen - please try again.`,
+      variant: "error",
+    });
+  });
 
   return (
     <>
       <Tooltip
-        text={localTracks.screen ? "Stop sharing" : "Share screen"}
+        text={
+          !!screenShareParticipant && !isScreenShareLocal
+            ? "Someone else is sharing"
+            : isSharing
+            ? "Stop sharing"
+            : "Share screen"
+        }
         placement="top"
       >
         <Button
-          variant={!localTracks.screen ? "primary" : "destructive"}
+          variant={!isSharing ? "primary" : "destructive"}
           size="circle"
-          onClick={toggleScreenshare}
+          onClick={toggleScreenShare}
+          disabled={!!screenShareParticipant && !isScreenShareLocal}
         >
-          {!localTracks.screen ? (
+          {!isSharing ? (
             <TbScreenShare style={{ width: "25px", height: "25px" }} />
           ) : (
             <TbScreenShareOff style={{ width: "25px", height: "25px" }} />
