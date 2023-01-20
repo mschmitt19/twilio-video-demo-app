@@ -22,7 +22,7 @@ import { UIStep, useVideoStore, VideoAppState } from "../../../../store/store";
 import { MaxWidthDiv } from "../../../styled";
 import VideoPreview from "../VideoPreview/VideoPreview";
 import ConfigureSettings from "../../../ConfigureSettings/ConfigureSettings";
-import { TEXT_COPY } from "../../../../lib/constants";
+import { SELECTED_VIDEO_INPUT_KEY, TEXT_COPY } from "../../../../lib/constants";
 import { useGetToken } from "../../../../lib/api";
 import PermissionsWarning from "../PermissionsWarning/PermissionsWarning";
 
@@ -49,6 +49,8 @@ export default function DevicesPreset({}: DevicesPresetProps) {
   const { roomName, identity } = formData;
   const { data, status: tokenStatus } = useGetToken(roomName, identity);
   const [loading, setLoading] = useState(false);
+
+  const storedLocalVideoDeviceId = window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY);
 
   const joinVideoClicked = async () => {
     setLoading(true);
@@ -158,8 +160,10 @@ export default function DevicesPreset({}: DevicesPresetProps) {
         navigator.mediaDevices
           .enumerateDevices()
           .then((devices) => {
+            // TODO: Tidy this logic. Seems lengthy
             const videoInput = devices.find(
-              (device) => device.kind === "videoinput"
+              (device) => device.kind === "videoinput" && 
+                (!storedLocalVideoDeviceId || device.deviceId === storedLocalVideoDeviceId)  
             );
             return Video.createLocalTracks({
               video: { deviceId: videoInput?.deviceId },

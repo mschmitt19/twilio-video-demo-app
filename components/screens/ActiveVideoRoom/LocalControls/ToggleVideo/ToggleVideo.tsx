@@ -5,6 +5,7 @@ import { BsCameraVideoFill, BsCameraVideoOff } from "react-icons/bs";
 
 import useDevices from "../../../../../lib/hooks/useDevices";
 import { useVideoStore, VideoAppState } from "../../../../../store/store";
+import { SELECTED_VIDEO_INPUT_KEY } from "../../../../../lib/constants";
 
 export default function ToggleVideo() {
   const toaster = useToaster();
@@ -12,6 +13,7 @@ export default function ToggleVideo() {
   const { localTracks, room, clearTrack, setLocalTracks, devicePermissions } =
     useVideoStore((state: VideoAppState) => state);
   const { hasVideoInputDevices } = useDevices(devicePermissions);
+  const storedLocalVideoDeviceId = window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY);
 
   const toggleVideo = () => {
     if (!isPublishing) {
@@ -29,8 +31,10 @@ export default function ToggleVideo() {
         navigator.mediaDevices
           .enumerateDevices()
           .then((devices) => {
+            // TODO: Tidy this logic. Seems lengthy
             const videoInput = devices.find(
-              (device) => device.kind === "videoinput"
+              (device) => device.kind === "videoinput" && 
+                (!storedLocalVideoDeviceId || device.deviceId === storedLocalVideoDeviceId)  
             );
             return Video.createLocalTracks({
               video: { deviceId: videoInput?.deviceId },
