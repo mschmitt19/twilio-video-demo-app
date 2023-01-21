@@ -41,8 +41,6 @@ export default function DevicesPreset({}: DevicesPresetProps) {
     setUIStep,
     devicePermissions,
     setDevicePermissions,
-    preferredDevices,
-    setPreferredDevices,
   } = useVideoStore((state: VideoAppState) => state);
 
   const [micEnabled, setMicEnabled] = useState(false);
