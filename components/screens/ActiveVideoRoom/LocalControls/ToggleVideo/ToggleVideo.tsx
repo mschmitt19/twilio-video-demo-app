@@ -10,10 +10,15 @@ import { SELECTED_VIDEO_INPUT_KEY } from "../../../../../lib/constants";
 export default function ToggleVideo() {
   const toaster = useToaster();
   const [isPublishing, setIsPublishing] = useState(false);
-  const { localTracks, room, clearTrack, setLocalTracks, devicePermissions } =
-    useVideoStore((state: VideoAppState) => state);
+  const {
+    localTracks,
+    room,
+    clearTrack,
+    setLocalTracks,
+    devicePermissions,
+    setDevicePermissions,
+  } = useVideoStore((state: VideoAppState) => state);
   const { hasVideoInputDevices } = useDevices(devicePermissions);
-  const storedLocalVideoDeviceId = window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY);
 
   const toggleVideo = () => {
     if (!isPublishing) {
@@ -27,31 +32,51 @@ export default function ToggleVideo() {
         room?.localParticipant?.emit("trackUnpublished", localTrackPublication);
       } else {
         setIsPublishing(true);
-        // setup local video track
-        navigator.mediaDevices
-          .enumerateDevices()
-          .then((devices) => {
-            // TODO: Tidy this logic. Seems lengthy
-            const videoInput = devices.find(
-              (device) => device.kind === "videoinput" && 
-                (!storedLocalVideoDeviceId || device.deviceId === storedLocalVideoDeviceId)  
+        // Refresh preferred device ID from local storage
+        let localVideoDeviceId = localStorage.getItem(SELECTED_VIDEO_INPUT_KEY);
+
+        // If we have don't have a device id yet (e.g. from local storage), find one!
+        if (!localVideoDeviceId) {
+          navigator.mediaDevices.enumerateDevices().then((devices) => {
+            const newDeviceId = devices.find(
+              (device) => device.kind === "videoinput"
+            )?.deviceId;
+            console.log(
+              `No existing device ID, so found deviceID ${newDeviceId}`
             );
-            return Video.createLocalTracks({
-              video: { deviceId: videoInput?.deviceId },
-              audio: false,
-            });
-          })
-          .then((localTracks) => {
-            room?.localParticipant?.publishTrack(localTracks[0]);
-            setLocalTracks("video", localTracks[0]);
-            setIsPublishing(false);
-          })
-          .catch((error) => {
-            toaster.push({
-              message: `Error enabling Camera - ${error.message}`,
-              variant: "error",
-            });
+            localVideoDeviceId = newDeviceId ?? null;
           });
+        }
+        console.log(`DeviceID is ${localVideoDeviceId}`);
+
+        if (localVideoDeviceId) {
+          Video.createLocalTracks({
+            video: { deviceId: localVideoDeviceId },
+            audio: false,
+          })
+            .then((localTracks) => {
+              console.log("localTracks...", localTracks);
+              setLocalTracks("video", localTracks[0]);
+              setDevicePermissions("camera", true);
+              setIsPublishing(false);
+              room?.localParticipant?.publishTrack(localTracks[0]);
+            })
+            .catch((error) => {
+              console.log("error", error.message);
+              toaster.push({
+                message: `Error: ${error.message}`,
+                variant: "error",
+              });
+              setDevicePermissions("camera", false);
+            });
+        } else {
+          console.log("No video input device id found");
+          toaster.push({
+            message: `Error: No video device found`,
+            variant: "error",
+          });
+          setDevicePermissions("camera", false);
+        }
       }
     }
   };

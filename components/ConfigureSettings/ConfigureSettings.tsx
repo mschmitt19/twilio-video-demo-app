@@ -39,33 +39,28 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
   const toaster = useToaster();
   const { CONFIGURE_SETTINGS_HEADER, CONFIGURE_SETTINGS_DESCRIPTION } =
     TEXT_COPY;
-  const {
-    localTracks,
-    setLocalTracks,
-    formData,
-    clearTrack,
-    devicePermissions,
-    room
-  } = useVideoStore((state: VideoAppState) => state);
+  const { localTracks, formData, devicePermissions } = useVideoStore(
+    (state: VideoAppState) => state
+  );
   const localVideo = localTracks.video;
   const [storedLocalVideoDeviceId, setStoredLocalVideoDeviceId] = useState(
-    window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)
+    localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)
   );
   const { videoInputDevices, audioInputDevices, audioOutputDevices } =
     useDevices(devicePermissions);
-    
+
   // Default preview track to local video track if there's one
   const [previewVideo, setPreviewVideo] = useState(localVideo);
-  // Need the MediaStreamTrack to be able to react to (and re-render) on track restarts 
+  // Need the MediaStreamTrack to be able to react to (and re-render) on track restarts
   const previewMediaStreamTrack = useMediaStreamTrack(previewVideo);
   // Get the device ID of the active track, or the preferred device ID from local storage, or the first video input device
-  const videoInputDeviceId = previewMediaStreamTrack?.getSettings().deviceId || storedLocalVideoDeviceId
-      || videoInputDevices?.find((device) => device.kind === "videoinput")?.deviceId;
+  const videoInputDeviceId =
+    previewMediaStreamTrack?.getSettings().deviceId ||
+    storedLocalVideoDeviceId ||
+    videoInputDevices?.find((device) => device.kind === "videoinput")?.deviceId;
 
-  
   const { identity } = formData;
   const modalHeadingID = useUID();
-
 
   const [isOpen, setIsOpen] = React.useState(false);
   const handleOpen = () => {
@@ -74,22 +69,21 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
       if (localVideo) {
         setPreviewVideo(localVideo);
       } else {
-        // If preview track was stopped on previous close, recreating it is no slower than restarting it (TODO: Fact Check!)
-        createPreviewTrack(videoInputDeviceId);
+        // Start preview. If preview track was stopped on previous close, restart it
+        createOrRestartPreviewTrack(videoInputDeviceId);
       }
     }
     setIsOpen(true);
-  }
+  };
 
   const handleClose = () => {
     // Stop the preview track if it's not the active track (i.e. turn off camera light!)
-    if (!localVideo) { 
-      previewVideo?.stop(); 
+    if (!localVideo) {
+      previewVideo?.stop();
       console.log(`Stopped preview track on close of ConfigureSettings`);
     }
     setIsOpen(false);
-  }
-
+  };
 
   function deviceChange(
     deviceID: string,
@@ -107,38 +101,32 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
     /* TODO: NEED TO ADD IN DEVICE CONFIGURATION SWITCHING FOR AUDIO INPUT & OUTPUT */
     if (type === "video" && previewVideo?.mediaStreamTrack.id !== deviceID) {
       setStoredLocalVideoDeviceId(deviceID);
-      window.localStorage.setItem(SELECTED_VIDEO_INPUT_KEY, deviceID);
-      clearTrack("video");
-      createPreviewTrack(deviceID);    
+      localStorage.setItem(SELECTED_VIDEO_INPUT_KEY, deviceID);
+      createOrRestartPreviewTrack(deviceID);
     }
   }
 
-  function createPreviewTrack(deviceID: string) {
-    Video.createLocalVideoTrack({
-      deviceId: { exact: deviceID },
-    }).then((newTrack) => {
-      console.log(`Preview track created with deviceID: ${newTrack.mediaStreamTrack.getSettings().deviceId}`);
-      if (previewVideo) {
-        previewVideo?.stop(); // Stop the old preview track if there is one
-        console.log(`Stopped old preview track before attaching new one`);
-      }
-      setPreviewVideo(newTrack);
-      if (localVideo) {
-        // If in the context of a Room, unpublish the old track
-        const localTrackPublication = room?.localParticipant?.unpublishTrack(localVideo);
-        // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
-        room?.localParticipant?.emit("trackUnpublished", localTrackPublication);
-        // Set the new track as the active track, and publish
-        setLocalTracks("video", newTrack);
-        room?.localParticipant?.publishTrack(localVideo);
-
-      }
-    }).catch((error) => {
-      toaster.push({
-        message: `Error creating local track - ${error.message}`,
-        variant: "error",
+  function createOrRestartPreviewTrack(deviceID: string) {
+    if (previewVideo) {
+      previewVideo.restart({
+        deviceId: { exact: deviceID },
       });
-    });
+      console.log(`Preview track replaced with deviceID: ${deviceID}`);
+    } else {
+      Video.createLocalVideoTrack({
+        deviceId: { exact: deviceID },
+      })
+        .then((newTrack) => {
+          console.log(`Preview track created with deviceID: ${deviceID}`);
+          setPreviewVideo(newTrack);
+        })
+        .catch((error) => {
+          toaster.push({
+            message: `Error creating local track - ${error.message}`,
+            variant: "error",
+          });
+        });
+    }
   }
 
   useEffect(() => {
