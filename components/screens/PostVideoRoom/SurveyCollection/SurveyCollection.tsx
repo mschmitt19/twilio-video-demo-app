@@ -51,7 +51,7 @@ export default function SurveyCollection({}) {
       otherIssues,
     };
 
-    console.log("paylod to submit to data warehouse: ", surveyPayload);
+    console.log("payload to submit to data warehouse: ", surveyPayload);
 
     await shipSurveyFeedback(surveyPayload);
 
