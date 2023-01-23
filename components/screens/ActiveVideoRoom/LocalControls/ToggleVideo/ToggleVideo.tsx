@@ -47,7 +47,6 @@ export default function ToggleVideo() {
             localVideoDeviceId = newDeviceId ?? null;
           });
         }
-        console.log(`DeviceID is ${localVideoDeviceId}`);
 
         if (localVideoDeviceId) {
           Video.createLocalTracks({

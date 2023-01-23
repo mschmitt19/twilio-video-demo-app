@@ -76,8 +76,6 @@ export default function ActiveVideoRoom({}) {
       room.on("participantDisconnected", handleParticipantDisconnected);
       room.on("dominantSpeakerChanged", handleDominantSpeakerChanged);
       room.once("disconnected", (room, error) => {
-        console.log("room", room);
-        console.log("error", error);
         localTracks.audio?.stop();
         localTracks.video?.stop();
         localTracks.screen?.stop();

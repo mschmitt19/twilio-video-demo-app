@@ -125,7 +125,6 @@ export default function DevicesPreset({}: DevicesPresetProps) {
             });
           })
           .then((localTracks) => {
-            console.log("localTracks...", localTracks);
             setLocalTracks("audio", localTracks[0]);
             setMicEnabled(true);
             setDevicePermissions("microphone", true);
@@ -177,7 +176,6 @@ export default function DevicesPreset({}: DevicesPresetProps) {
             localVideoDeviceId = newDeviceId ?? null;
           });
         }
-        console.log(`DeviceID is ${localVideoDeviceId}`);
 
         if (localVideoDeviceId) {
           Video.createLocalTracks({
@@ -185,7 +183,6 @@ export default function DevicesPreset({}: DevicesPresetProps) {
             audio: false,
           })
             .then((localTracks) => {
-              console.log("localTracks...", localTracks);
               setLocalTracks("video", localTracks[0]);
               setCamEnabled(true);
               setDevicePermissions("camera", true);
@@ -317,7 +314,7 @@ export default function DevicesPreset({}: DevicesPresetProps) {
                   onClick={async () => await joinVideoClicked()}
                   loading={loading}
                   style={{ background: "#F22F46" }}
-                  //disabled={preflightStatus !== "passed"}
+                  disabled={preflightStatus !== "passed"}
                 >
                   {joinButtonText()}
                 </Button>
