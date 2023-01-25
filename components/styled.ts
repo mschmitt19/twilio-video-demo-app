@@ -140,7 +140,7 @@ export const MaxWidthDiv = styled.div(
   css({
     maxWidth: "500px",
     marginTop: "space40",
-    minWidth: "300px",
+    minWidth: "350px",
     justifyContent: "center",
   })
 );

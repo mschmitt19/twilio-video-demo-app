@@ -13,6 +13,7 @@ interface ParticipantTracksProps {
 export default function ParticipantTracks({
   participant,
   isMainFocus,
+  isLocal,
 }: ParticipantTracksProps) {
   const publications = usePublications(participant);
   let enableScreenShare = true;
@@ -42,6 +43,7 @@ export default function ParticipantTracks({
           key={publication.kind}
           publication={publication}
           participant={participant}
+          isLocal={isLocal}
         />
       ))}
     </>

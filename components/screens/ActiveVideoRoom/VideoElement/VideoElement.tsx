@@ -6,9 +6,14 @@ import { VideoContainer } from "../../../styled";
 interface VideoElementProps {
   track: IVideoTrack;
   priority?: Track.Priority | null;
+  isLocal: boolean;
 }
 
-export default function VideoElement({ track, priority }: VideoElementProps) {
+export default function VideoElement({
+  track,
+  priority,
+  isLocal,
+}: VideoElementProps) {
   const ref = useRef<HTMLVideoElement>(null!);
 
   useEffect(() => {
@@ -33,7 +38,7 @@ export default function VideoElement({ track, priority }: VideoElementProps) {
   }, [track, priority]);
 
   const style = {
-    transform: "",
+    transform: isLocal ? "scaleX(-1)" : "",
     objectFit: "cover" as const,
   };
 

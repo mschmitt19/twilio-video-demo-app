@@ -5,6 +5,7 @@ import { BsMicFill, BsMicMute } from "react-icons/bs";
 
 import { useVideoStore, VideoAppState } from "../../../../../store/store";
 import useIsTrackEnabled from "../../../../../lib/hooks/useIsTrackEnabled";
+import { SELECTED_AUDIO_INPUT_KEY } from "../../../../../lib/constants";
 
 export default function ToggleAudio() {
   const toaster = useToaster();
@@ -13,34 +14,52 @@ export default function ToggleAudio() {
   const audioTrack = localTracks.audio;
   const isEnabled = useIsTrackEnabled(audioTrack);
 
-  const toggleAudio = () => {
+  const toggleAudio = async () => {
     if (audioTrack) {
       audioTrack.isEnabled ? audioTrack.disable() : audioTrack.enable();
     } else {
-      // setup local audio track
-      navigator.mediaDevices
-        .enumerateDevices()
-        .then((devices) => {
-          const audioInput = devices.find(
-            (device) => device.kind === "audioinput"
-          );
-          return Video.createLocalTracks({
-            audio: { deviceId: audioInput?.deviceId },
-            video: false,
+      // Refresh preferred device ID from local storage
+      let localAudioDeviceId = localStorage.getItem(SELECTED_AUDIO_INPUT_KEY);
+
+      // If we have don't have a device id yet (e.g. from local storage), find one!
+      if (!localAudioDeviceId) {
+        const newDeviceID = await navigator.mediaDevices
+          .enumerateDevices()
+          .then((devices) => {
+            const newDeviceId = devices.find(
+              (device) => device.kind === "audioinput"
+            )?.deviceId;
+            return newDeviceId ?? null;
           });
+        localAudioDeviceId = newDeviceID;
+      }
+
+      if (localAudioDeviceId) {
+        Video.createLocalTracks({
+          audio: { deviceId: localAudioDeviceId },
+          video: false,
         })
-        .then((localTracks) => {
-          room?.localParticipant?.publishTrack(localTracks[0]);
-          setLocalTracks("audio", localTracks[0]);
-          setDevicePermissions("camera", true);
-        })
-        .catch((error) => {
-          toaster.push({
-            message: `Error starting microphone - ${error.message}`,
-            variant: "error",
+          .then((localTracks) => {
+            setLocalTracks("audio", localTracks[0]);
+            setDevicePermissions("microphone", true);
+            room?.localParticipant?.publishTrack(localTracks[0]);
+          })
+          .catch((error) => {
+            console.log("error", error.message);
+            toaster.push({
+              message: `Error: ${error.message}`,
+              variant: "error",
+            });
+            setDevicePermissions("microphone", false);
           });
-          setDevicePermissions("camera", false);
+      } else {
+        console.log("No audio input device id found");
+        toaster.push({
+          message: `Error: No audio input device found`,
+          variant: "error",
         });
+        setDevicePermissions("microphone", false);
+      }
     }
   };
 

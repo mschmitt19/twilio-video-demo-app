@@ -98,13 +98,19 @@ export default function ActiveVideoRoom({}) {
     }
   }, [room]);
 
+  /**
+   * Current issues with getStats on Chrome: https://github.com/twilio/twilio-video.js/issues/1968
+   */
   // Ship WebRTC stats to data store
-  useEffect(() => {
-    const shipStats = setInterval(async () => {
-      room?.getStats().then((results) => shipRoomStats(results[0]));
-    }, 15000);
-    return () => clearInterval(shipStats);
-  }, [room]);
+  // useEffect(() => {
+  //   const shipStats = setInterval(async () => {
+  //     room
+  //       ?.getStats()
+  //       .then((results) => shipRoomStats(results[0]))
+  //       .catch((error) => console.log("error gathering WebRTC stats", error));
+  //   }, 15000);
+  //   return () => clearInterval(shipStats);
+  // }, [room]);
 
   // Disconnect from the Video room if browser tab is refreshed or closed
   window.addEventListener("beforeunload", () => {

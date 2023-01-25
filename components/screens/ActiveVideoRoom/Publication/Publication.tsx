@@ -15,11 +15,13 @@ interface PublicationProps {
   publication: LocalTrackPublication | RemoteTrackPublication;
   participant: Participant;
   videoPriority?: Track.Priority | null;
+  isLocal: boolean;
 }
 
 export default function Publication({
   publication,
   videoPriority,
+  isLocal,
 }: PublicationProps) {
   const track = useTrack(publication);
 
@@ -28,7 +30,11 @@ export default function Publication({
   switch (track.kind) {
     case "video":
       return (
-        <VideoElement track={track as IVideoTrack} priority={videoPriority} />
+        <VideoElement
+          track={track as IVideoTrack}
+          priority={videoPriority}
+          isLocal={isLocal}
+        />
       );
     case "audio":
       return <AudioElement track={track} />;
