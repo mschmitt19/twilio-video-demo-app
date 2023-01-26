@@ -100,7 +100,6 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
     // Stop the preview track if it's not the active track (i.e. turn off camera light!)
     if (!localVideo) {
       previewVideo?.stop();
-      console.log(`Stopped preview track on close of ConfigureSettings`);
     }
     setIsOpen(false);
   };
@@ -141,13 +140,11 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
       previewVideo.restart({
         deviceId: { exact: deviceID },
       });
-      console.log(`Preview track replaced with deviceID: ${deviceID}`);
     } else {
       Video.createLocalVideoTrack({
         deviceId: { exact: deviceID },
       })
         .then((newTrack) => {
-          console.log(`Preview track created with deviceID: ${deviceID}`);
           setPreviewVideo(newTrack);
         })
         .catch((error) => {
@@ -164,13 +161,11 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
       previewAudio.restart({
         deviceId: { exact: deviceID },
       });
-      console.log(`Preview track replaced with deviceID: ${deviceID}`);
     } else {
       Video.createLocalAudioTrack({
         deviceId: { exact: deviceID },
       })
         .then((newTrack) => {
-          console.log(`Preview track created with deviceID: ${deviceID}`);
           setPreviewAudio(newTrack);
         })
         .catch((error) => {

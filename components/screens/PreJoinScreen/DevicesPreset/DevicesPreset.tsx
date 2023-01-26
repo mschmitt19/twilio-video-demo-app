@@ -80,7 +80,6 @@ export default function DevicesPreset({}: DevicesPresetProps) {
         .then((room: Video.Room) => setActiveRoom(room))
         .then(() => setUIStep(UIStep.VIDEO_ROOM))
         .catch((error) => {
-          console.log("error", error.message);
           toaster.push({
             message: `Error joining room - ${error.message}`,
             variant: "error",
@@ -107,7 +106,6 @@ export default function DevicesPreset({}: DevicesPresetProps) {
   async function microphoneToggle() {
     if (micEnabled) {
       // stop the track
-      console.log("audio track already setup -- stop the track");
       localTracks.audio?.stop();
       clearTrack("audio");
       setMicEnabled(false);
@@ -116,24 +114,15 @@ export default function DevicesPreset({}: DevicesPresetProps) {
       let localAudioInputDeviceId = localStorage.getItem(
         SELECTED_AUDIO_INPUT_KEY
       );
-      console.log(
-        "1. localAudioInputDeviceId from local storage",
-        localAudioInputDeviceId
-      );
 
       if (!!localAudio) {
-        console.log("audio track setup -- restart the track");
+        // audio track setup -- restart the track
         localVideo?.restart();
         setMicEnabled(true);
       } else {
         // no existing track, ask for permissions and setup
-        console.log(
-          `2. setup local audio track, local preferred device ID is ${localAudioInputDeviceId}`
-        );
-
         // If we have don't have a device id yet (e.g. from local storage), find one!
         if (!localAudioInputDeviceId) {
-          console.log("3. do not have a preferred device ID, go get one");
           const newDeviceID = await navigator.mediaDevices
             .enumerateDevices()
             .then((devices) => {
@@ -142,11 +131,6 @@ export default function DevicesPreset({}: DevicesPresetProps) {
               )?.deviceId;
               return newDeviceId ?? null;
             });
-
-          console.log(
-            "4. No existing device ID, so found deviceID",
-            newDeviceID
-          );
           localAudioInputDeviceId = newDeviceID;
         }
 
@@ -161,22 +145,18 @@ export default function DevicesPreset({}: DevicesPresetProps) {
               setDevicePermissions("camera", true);
             })
             .catch((error) => {
-              console.log("error", error.message);
               toaster.push({
                 message: `Error: ${error.message}`,
                 variant: "error",
               });
               setMicEnabled(false);
-              //setDevicePermissions("camera", false);
             });
         } else {
-          console.log("5. No audio input device id found");
           toaster.push({
             message: `Error: No video device found`,
             variant: "error",
           });
           setMicEnabled(false);
-          //setDevicePermissions("camera", false);
         }
       }
     }
@@ -185,32 +165,23 @@ export default function DevicesPreset({}: DevicesPresetProps) {
   async function cameraToggle() {
     if (camEnabled) {
       // stop the track
-      console.log("video track already setup -- stop the track");
       localVideo?.stop();
       clearTrack("video");
       setCamEnabled(false);
     } else {
       // Refresh preferred device ID from local storage
       let localVideoDeviceId = localStorage.getItem(SELECTED_VIDEO_INPUT_KEY);
-      console.log(
-        "1. localVideoDeviceId from local storage",
-        localVideoDeviceId
-      );
 
       // either request permission and setup the local track
       // if already created but stopped, start the track
       if (!!localVideo) {
-        console.log("video track setup -- start the track");
+        // video track setup -- start the track
         localVideo?.restart();
         setCamEnabled(true);
       } else {
         // no existing track, ask for permissions and setup
-        console.log(
-          `2. setup local video track, local preferred device ID is ${localVideoDeviceId}`
-        );
         // If we have don't have a device id yet (e.g. from local storage), find one!
         if (!localVideoDeviceId) {
-          console.log("3. do not have a preferred device ID, go get one");
           const newDeviceID = await navigator.mediaDevices
             .enumerateDevices()
             .then((devices) => {
@@ -219,11 +190,6 @@ export default function DevicesPreset({}: DevicesPresetProps) {
               )?.deviceId;
               return newDeviceId ?? null;
             });
-
-          console.log(
-            "4. No existing device ID, so found deviceID",
-            newDeviceID
-          );
           localVideoDeviceId = newDeviceID;
         }
 
@@ -238,22 +204,18 @@ export default function DevicesPreset({}: DevicesPresetProps) {
               setDevicePermissions("camera", true);
             })
             .catch((error) => {
-              console.log("error", error.message);
               toaster.push({
                 message: `Error: ${error.message}`,
                 variant: "error",
               });
               setCamEnabled(false);
-              //setDevicePermissions("camera", false);
             });
         } else {
-          console.log("5. No video input device id found");
           toaster.push({
             message: `Error: No video device found`,
             variant: "error",
           });
           setCamEnabled(false);
-          //setDevicePermissions("camera", false);
         }
       }
     }

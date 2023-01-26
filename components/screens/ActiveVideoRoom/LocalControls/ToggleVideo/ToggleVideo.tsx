@@ -60,7 +60,6 @@ export default function ToggleVideo() {
               room?.localParticipant?.publishTrack(localTracks[0]);
             })
             .catch((error) => {
-              console.log("error", error.message);
               toaster.push({
                 message: `Error: ${error.message}`,
                 variant: "error",
@@ -68,7 +67,6 @@ export default function ToggleVideo() {
               setDevicePermissions("camera", false);
             });
         } else {
-          console.log("No video input device id found");
           toaster.push({
             message: `Error: No video device found`,
             variant: "error",

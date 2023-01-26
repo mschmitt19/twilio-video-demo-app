@@ -45,7 +45,6 @@ export default function ToggleAudio() {
             room?.localParticipant?.publishTrack(localTracks[0]);
           })
           .catch((error) => {
-            console.log("error", error.message);
             toaster.push({
               message: `Error: ${error.message}`,
               variant: "error",
@@ -53,7 +52,6 @@ export default function ToggleAudio() {
             setDevicePermissions("microphone", false);
           });
       } else {
-        console.log("No audio input device id found");
         toaster.push({
           message: `Error: No audio input device found`,
           variant: "error",

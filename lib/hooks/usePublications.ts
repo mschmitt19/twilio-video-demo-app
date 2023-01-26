@@ -17,16 +17,14 @@ export default function usePublications(participant: Participant) {
     );
 
     const publicationAdded = (publication: TrackPublication) => {
-      console.log("publication added", publication);
       setPublications((prevPublications) => [...prevPublications, publication]);
-    }
+    };
 
     const publicationRemoved = (publication: TrackPublication) => {
-      console.log("publication removed", publication);
       setPublications((prevPublications) =>
         prevPublications.filter((p) => p !== publication)
       );
-    }
+    };
 
     participant.on("trackPublished", publicationAdded);
     participant.on("trackUnpublished", publicationRemoved);
