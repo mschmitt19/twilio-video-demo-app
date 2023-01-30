@@ -29,6 +29,7 @@ export default function VideoPreviewTrack({
 
   const style = {
     objectFit: "cover" as const,
+    transform: "scaleX(-1)",
   };
 
   return <VideoContainer ref={ref} style={style} />;

@@ -8,7 +8,7 @@ import {
   LocalAudioTrack,
   LocalVideoTrack,
 } from "twilio-video";
-import { BsMicFill, BsMicMute } from "react-icons/bs";
+import { BsMicMute } from "react-icons/bs";
 import { TbScreenShare } from "react-icons/tb";
 
 import ParticipantTracks from "../ParticipantTracks/ParticipantTracks";
@@ -23,6 +23,7 @@ import {
   AvatarContainer,
 } from "../../../styled";
 import useIsTrackEnabled from "../../../../lib/hooks/useIsTrackEnabled";
+import NetworkQualityLevel from "./NetworkQualityLevel/NetworkQualityLevel";
 
 interface RoomParticipantProps {
   participant: IParticipant;
@@ -88,15 +89,8 @@ export default function Participant({
                 }}
               />
             )}
-            {isAudioEnabled ? (
-              <BsMicFill
-                style={{
-                  width: "12px",
-                  height: "12px",
-                  color: "rgb(72, 221, 0)",
-                }}
-              />
-            ) : (
+            <NetworkQualityLevel participant={participant} />
+            {!isAudioEnabled && (
               <BsMicMute
                 style={{
                   width: "12px",
@@ -105,7 +99,6 @@ export default function Participant({
                 }}
               />
             )}
-
             <Text
               as="p"
               color="colorText"

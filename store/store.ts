@@ -44,6 +44,8 @@ export interface VideoAppState {
   devicePermissions: PermissionsState;
   hasSkippedPermissionCheck: boolean;
   localTracks: LocalTracks;
+  activeSinkId: undefined | string;
+  setActiveSinkId: (deviceId: string) => void;
   setDevicePermissions: (
     device: "camera" | "microphone",
     enabled: boolean
@@ -82,6 +84,8 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
     screen: undefined,
     data: undefined,
   },
+  activeSinkId: undefined,
+  setActiveSinkId: (deviceId: string) => set({ activeSinkId: deviceId }),
   setHasSkippedPermissionCheck: (hasSkipped: boolean) =>
     set({ hasSkippedPermissionCheck: hasSkipped }),
   setDevicePermissions: (device: "camera" | "microphone", enabled: boolean) => {

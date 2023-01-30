@@ -10,7 +10,7 @@ import ToggleAudio from "./LocalControls/ToggleAudio/ToggleAudio";
 import ToggleScreenshare from "./LocalControls/ToggleScreenshare/ToggleScreenshare";
 import LeaveRoom from "./LocalControls/LeaveRoom/LeaveRoom";
 import RoomInfo from "./RoomInfo/RoomInfo";
-import { shipRoomStats } from "../../../lib/api";
+// import { shipRoomStats } from "../../../lib/api";
 import useScreenShareParticipant from "../../../lib/hooks/useScreenShareParticipant";
 import GridView from "./GridView/GridView";
 import FocusedTrackView from "./FocusedTrackView/FocusedTrackView";
@@ -46,7 +46,6 @@ export default function ActiveVideoRoom({}) {
       const handleParticipantConnected = (
         participant: Video.RemoteParticipant
       ) => {
-        console.log("participantConnected", participant);
         setOrderedParticipants((prevParticipants) => [
           ...prevParticipants,
           { participant, dominantSpeakerStartTime: 0 },
@@ -64,7 +63,6 @@ export default function ActiveVideoRoom({}) {
       const handleDominantSpeakerChanged = (
         participant: Video.RemoteParticipant
       ) => {
-        console.log("The new dominant speaker in the Room is:", participant);
         if (participant) {
           setDominantSpeaker(participant);
         } else {
@@ -80,11 +78,6 @@ export default function ActiveVideoRoom({}) {
         localTracks.video?.stop();
         localTracks.screen?.stop();
         if (error) {
-          console.log(
-            "You were disconnected from the Room:",
-            error.code,
-            error.message
-          );
           setDisconnectError(error.code, error.message);
         }
         setUIStep(UIStep.VIDEO_ROOM_DISCONNECT);
@@ -98,13 +91,20 @@ export default function ActiveVideoRoom({}) {
     }
   }, [room]);
 
+  /**
+   * Current issues with getStats on Chrome: https://github.com/twilio/twilio-video.js/issues/1968
+   * Will uncomment when resolved
+   */
   // Ship WebRTC stats to data store
-  useEffect(() => {
-    const shipStats = setInterval(async () => {
-      room?.getStats().then((results) => shipRoomStats(results[0]));
-    }, 15000);
-    return () => clearInterval(shipStats);
-  }, [room]);
+  // useEffect(() => {
+  //   const shipStats = setInterval(async () => {
+  //     room
+  //       ?.getStats()
+  //       .then((results) => shipRoomStats(results[0]))
+  //       .catch((error) => console.log("error gathering WebRTC stats", error));
+  //   }, 15000);
+  //   return () => clearInterval(shipStats);
+  // }, [room]);
 
   // Disconnect from the Video room if browser tab is refreshed or closed
   window.addEventListener("beforeunload", () => {

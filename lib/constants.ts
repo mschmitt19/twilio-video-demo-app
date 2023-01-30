@@ -30,6 +30,8 @@ export const TEXT_COPY = {
   ROOM_NAME_INPUT_DISABLED: "Room name was auto-populated by invite URL",
   ROOM_NAME_INPUT_ENABLED:
     "To join a video room manually, please enter the room name.",
+  PERMISSIONS_CHECK_WARNING:
+    "To actively participate in the video call, this application will need permission to access your camera and microphone. After acknowledgement, the browser will request permission.",
   HELP_TEXT_PRELIGHT_PASSED: "Click to join the video room!",
   HELP_TEXT_PRELIGHT_FAILED:
     "Failed connectivity checks to Twilio Cloud - please check your network connection.",

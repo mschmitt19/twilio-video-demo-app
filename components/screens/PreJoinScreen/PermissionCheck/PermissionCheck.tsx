@@ -12,6 +12,7 @@ import {
 
 import { useVideoStore, VideoAppState } from "../../../../store/store";
 import { MaxWidthDiv } from "../../../styled";
+import { TEXT_COPY } from "../../../../lib/constants";
 
 interface PermissionCheckProps {}
 
@@ -21,6 +22,7 @@ export default function PermissionCheck({}: PermissionCheckProps) {
     (state: VideoAppState) => state
   );
   const [isChecking, setIsChecking] = useState<boolean>(false);
+  const { PERMISSIONS_CHECK_WARNING } = TEXT_COPY;
 
   const handleSkip = () => {
     setHasSkippedPermissionCheck(true);
@@ -56,7 +58,6 @@ export default function PermissionCheck({}: PermissionCheckProps) {
         message: `Error requesting permission to camera and mic: ${error.message}`,
         variant: "error",
       });
-      console.log("Error requesting permission", error);
       setHasSkippedPermissionCheck(true);
       setIsChecking(false);
     }
@@ -75,9 +76,7 @@ export default function PermissionCheck({}: PermissionCheckProps) {
             fontWeight="fontWeightMedium"
             color="colorText"
           >
-            To actively participate in the video call, this application will
-            need permission to access your camera and microphone. After
-            acknowledgement, the browser will request permission.
+            {PERMISSIONS_CHECK_WARNING}
           </Text>
           <Flex marginTop={"space60"} grow hAlignContent={"center"}>
             <Stack orientation={"horizontal"} spacing="space30">

@@ -20,7 +20,7 @@ export default function ToggleVideo() {
   } = useVideoStore((state: VideoAppState) => state);
   const { hasVideoInputDevices } = useDevices(devicePermissions);
 
-  const toggleVideo = () => {
+  const toggleVideo = async () => {
     if (!isPublishing) {
       if (localTracks.video) {
         localTracks.video.stop();
@@ -37,15 +37,15 @@ export default function ToggleVideo() {
 
         // If we have don't have a device id yet (e.g. from local storage), find one!
         if (!localVideoDeviceId) {
-          navigator.mediaDevices.enumerateDevices().then((devices) => {
-            const newDeviceId = devices.find(
-              (device) => device.kind === "videoinput"
-            )?.deviceId;
-            console.log(
-              `No existing device ID, so found deviceID ${newDeviceId}`
-            );
-            localVideoDeviceId = newDeviceId ?? null;
-          });
+          const newDeviceID = await navigator.mediaDevices
+            .enumerateDevices()
+            .then((devices) => {
+              const newDeviceId = devices.find(
+                (device) => device.kind === "videoinput"
+              )?.deviceId;
+              return newDeviceId ?? null;
+            });
+          localVideoDeviceId = newDeviceID;
         }
 
         if (localVideoDeviceId) {
@@ -54,14 +54,12 @@ export default function ToggleVideo() {
             audio: false,
           })
             .then((localTracks) => {
-              console.log("localTracks...", localTracks);
               setLocalTracks("video", localTracks[0]);
               setDevicePermissions("camera", true);
               setIsPublishing(false);
               room?.localParticipant?.publishTrack(localTracks[0]);
             })
             .catch((error) => {
-              console.log("error", error.message);
               toaster.push({
                 message: `Error: ${error.message}`,
                 variant: "error",
@@ -69,7 +67,6 @@ export default function ToggleVideo() {
               setDevicePermissions("camera", false);
             });
         } else {
-          console.log("No video input device id found");
           toaster.push({
             message: `Error: No video device found`,
             variant: "error",

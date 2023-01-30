@@ -39,25 +39,45 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
   const toaster = useToaster();
   const { CONFIGURE_SETTINGS_HEADER, CONFIGURE_SETTINGS_DESCRIPTION } =
     TEXT_COPY;
-  const { localTracks, formData, devicePermissions } = useVideoStore(
-    (state: VideoAppState) => state
-  );
+  const {
+    localTracks,
+    formData,
+    devicePermissions,
+    activeSinkId,
+    setActiveSinkId,
+  } = useVideoStore((state: VideoAppState) => state);
   const localVideo = localTracks.video;
+  const localAudio = localTracks.audio;
   const [storedLocalVideoDeviceId, setStoredLocalVideoDeviceId] = useState(
     localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)
   );
+  const [storedLocalAudioInputDeviceId, setStoredLocalAudioInputDeviceId] =
+    useState(localStorage.getItem(SELECTED_AUDIO_INPUT_KEY));
+  const [storedLocalAudioOutputDeviceId, setStoredLocalAudioOutputDeviceId] =
+    useState(localStorage.getItem(SELECTED_AUDIO_OUTPUT_KEY));
   const { videoInputDevices, audioInputDevices, audioOutputDevices } =
     useDevices(devicePermissions);
 
-  // Default preview track to local video track if there's one
+  // Default preview tracks to local video and audio tracks (if they exist)
   const [previewVideo, setPreviewVideo] = useState(localVideo);
+  const [previewAudio, setPreviewAudio] = useState(localAudio);
+
   // Need the MediaStreamTrack to be able to react to (and re-render) on track restarts
   const previewMediaStreamTrack = useMediaStreamTrack(previewVideo);
-  // Get the device ID of the active track, or the preferred device ID from local storage, or the first video input device
+
+  // Get the device ID of the active track, or the preferred device ID from local storage, or the first input device
   const videoInputDeviceId =
     previewMediaStreamTrack?.getSettings().deviceId ||
     storedLocalVideoDeviceId ||
     videoInputDevices?.find((device) => device.kind === "videoinput")?.deviceId;
+  const audioInputDeviceId =
+    storedLocalAudioInputDeviceId ||
+    audioInputDevices?.find((device) => device.kind === "audioinput")?.deviceId;
+  const audioOutputDeviceId =
+    storedLocalAudioOutputDeviceId ||
+    activeSinkId ||
+    audioOutputDevices?.find((device) => device.kind === "audioinput")
+      ?.deviceId;
 
   const { identity } = formData;
   const modalHeadingID = useUID();
@@ -70,7 +90,7 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
         setPreviewVideo(localVideo);
       } else {
         // Start preview. If preview track was stopped on previous close, restart it
-        createOrRestartPreviewTrack(videoInputDeviceId);
+        generatePreviewVideoTrack(videoInputDeviceId);
       }
     }
     setIsOpen(true);
@@ -80,7 +100,6 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
     // Stop the preview track if it's not the active track (i.e. turn off camera light!)
     if (!localVideo) {
       previewVideo?.stop();
-      console.log(`Stopped preview track on close of ConfigureSettings`);
     }
     setIsOpen(false);
   };
@@ -102,23 +121,52 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
     if (type === "video" && previewVideo?.mediaStreamTrack.id !== deviceID) {
       setStoredLocalVideoDeviceId(deviceID);
       localStorage.setItem(SELECTED_VIDEO_INPUT_KEY, deviceID);
-      createOrRestartPreviewTrack(deviceID);
+      generatePreviewVideoTrack(deviceID);
+    }
+    if (type === "audioInput") {
+      setStoredLocalAudioInputDeviceId(deviceID);
+      localStorage.setItem(SELECTED_AUDIO_INPUT_KEY, deviceID);
+      generatePreviewAudioTrack(deviceID);
+    }
+    if (type === "audioOutput") {
+      setStoredLocalAudioOutputDeviceId(deviceID);
+      localStorage.setItem(SELECTED_AUDIO_OUTPUT_KEY, deviceID);
+      setActiveSinkId(deviceID);
     }
   }
 
-  function createOrRestartPreviewTrack(deviceID: string) {
+  function generatePreviewVideoTrack(deviceID: string) {
     if (previewVideo) {
       previewVideo.restart({
         deviceId: { exact: deviceID },
       });
-      console.log(`Preview track replaced with deviceID: ${deviceID}`);
     } else {
       Video.createLocalVideoTrack({
         deviceId: { exact: deviceID },
       })
         .then((newTrack) => {
-          console.log(`Preview track created with deviceID: ${deviceID}`);
           setPreviewVideo(newTrack);
+        })
+        .catch((error) => {
+          toaster.push({
+            message: `Error creating local track - ${error.message}`,
+            variant: "error",
+          });
+        });
+    }
+  }
+
+  function generatePreviewAudioTrack(deviceID: string) {
+    if (previewAudio) {
+      previewAudio.restart({
+        deviceId: { exact: deviceID },
+      });
+    } else {
+      Video.createLocalAudioTrack({
+        deviceId: { exact: deviceID },
+      })
+        .then((newTrack) => {
+          setPreviewAudio(newTrack);
         })
         .catch((error) => {
           toaster.push({
@@ -207,7 +255,9 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
                 id="author"
                 onChange={(e) => deviceChange(e.target.value, "audioInput")}
                 defaultValue={
-                  devicePermissions.microphone ? "" : "no-mic-permission"
+                  devicePermissions.microphone
+                    ? audioInputDeviceId
+                    : "no-mic-permission"
                 }
                 disabled={
                   audioInputDevices.length < 2 || !devicePermissions.microphone
@@ -234,6 +284,11 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
               <Select
                 id="author"
                 onChange={(e) => deviceChange(e.target.value, "audioOutput")}
+                defaultValue={
+                  devicePermissions.microphone
+                    ? audioOutputDeviceId
+                    : "no-mic-permission"
+                }
               >
                 {devicePermissions.microphone ? (
                   audioOutputDevices.map((audioOutput: MediaDeviceInfo) => (

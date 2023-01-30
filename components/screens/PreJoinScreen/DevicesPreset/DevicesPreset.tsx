@@ -22,7 +22,11 @@ import { UIStep, useVideoStore, VideoAppState } from "../../../../store/store";
 import { MaxWidthDiv } from "../../../styled";
 import VideoPreview from "../VideoPreview/VideoPreview";
 import ConfigureSettings from "../../../ConfigureSettings/ConfigureSettings";
-import { SELECTED_VIDEO_INPUT_KEY, TEXT_COPY } from "../../../../lib/constants";
+import {
+  SELECTED_VIDEO_INPUT_KEY,
+  SELECTED_AUDIO_INPUT_KEY,
+  TEXT_COPY,
+} from "../../../../lib/constants";
 import { useGetToken } from "../../../../lib/api";
 import PermissionsWarning from "../PermissionsWarning/PermissionsWarning";
 import useMediaStreamTrack from "../../../../lib/hooks/useMediaStreamTrack";
@@ -42,7 +46,6 @@ export default function DevicesPreset({}: DevicesPresetProps) {
     devicePermissions,
     setDevicePermissions,
   } = useVideoStore((state: VideoAppState) => state);
-
   const [micEnabled, setMicEnabled] = useState(false);
   const [camEnabled, setCamEnabled] = useState(false);
   const [preflightStatus, setPreflightStatus] = useState("idle");
@@ -52,6 +55,7 @@ export default function DevicesPreset({}: DevicesPresetProps) {
   const [loading, setLoading] = useState(false);
 
   const localVideo = localTracks.video;
+  const localAudio = localTracks.audio;
   // Need the MediaStreamTrack to be able to react to (and re-render) on track restarts
   const localMediaStreamTrack = useMediaStreamTrack(localVideo);
 
@@ -68,11 +72,14 @@ export default function DevicesPreset({}: DevicesPresetProps) {
     }
 
     if (data.token) {
-      Video.connect(data.token, { tracks, dominantSpeaker: true })
+      Video.connect(data.token, {
+        tracks,
+        dominantSpeaker: true,
+        networkQuality: { local: 1, remote: 1 },
+      })
         .then((room: Video.Room) => setActiveRoom(room))
         .then(() => setUIStep(UIStep.VIDEO_ROOM))
         .catch((error) => {
-          console.log("error", error.message);
           toaster.push({
             message: `Error joining room - ${error.message}`,
             variant: "error",
@@ -96,56 +103,68 @@ export default function DevicesPreset({}: DevicesPresetProps) {
     }
   }
 
-  function microphoneToggle() {
+  async function microphoneToggle() {
     if (micEnabled) {
       // stop the track
-      console.log("audio track already setup -- stop the track");
       localTracks.audio?.stop();
       clearTrack("audio");
       setMicEnabled(false);
     } else {
-      // either request permission and setup the local track
-      // if already created but stopped, start the track
-      if (!!localTracks.audio) {
-        console.log("audio track setup -- start the track");
-        localTracks.audio?.restart();
+      // Refresh preferred device ID from local storage
+      let localAudioInputDeviceId = localStorage.getItem(
+        SELECTED_AUDIO_INPUT_KEY
+      );
+
+      if (!!localAudio) {
+        // audio track setup -- restart the track
+        localVideo?.restart();
         setMicEnabled(true);
       } else {
         // no existing track, ask for permissions and setup
-        console.log("setup local audio track");
-        navigator.mediaDevices
-          .enumerateDevices()
-          .then((devices) => {
-            const audioInput = devices.find(
-              (device) => device.kind === "audioinput"
-            );
-            return Video.createLocalTracks({
-              audio: { deviceId: audioInput?.deviceId },
-              video: false,
+        // If we have don't have a device id yet (e.g. from local storage), find one!
+        if (!localAudioInputDeviceId) {
+          const newDeviceID = await navigator.mediaDevices
+            .enumerateDevices()
+            .then((devices) => {
+              const newDeviceId = devices.find(
+                (device) => device.kind === "audioinput"
+              )?.deviceId;
+              return newDeviceId ?? null;
             });
+          localAudioInputDeviceId = newDeviceID;
+        }
+
+        if (localAudioInputDeviceId) {
+          Video.createLocalTracks({
+            audio: { deviceId: localAudioInputDeviceId },
+            video: false,
           })
-          .then((localTracks) => {
-            setLocalTracks("audio", localTracks[0]);
-            setMicEnabled(true);
-            setDevicePermissions("microphone", true);
-          })
-          .catch((error) => {
-            console.log("error", error.message);
-            toaster.push({
-              message: `Error: ${error.message}`,
-              variant: "error",
+            .then((localTracks) => {
+              setLocalTracks("audio", localTracks[0]);
+              setMicEnabled(true);
+              setDevicePermissions("camera", true);
+            })
+            .catch((error) => {
+              toaster.push({
+                message: `Error: ${error.message}`,
+                variant: "error",
+              });
+              setMicEnabled(false);
             });
-            setMicEnabled(false);
-            setDevicePermissions("microphone", false);
+        } else {
+          toaster.push({
+            message: `Error: No video device found`,
+            variant: "error",
           });
+          setMicEnabled(false);
+        }
       }
     }
   }
 
-  function cameraToggle() {
+  async function cameraToggle() {
     if (camEnabled) {
       // stop the track
-      console.log("video track already setup -- stop the track");
       localVideo?.stop();
       clearTrack("video");
       setCamEnabled(false);
@@ -156,25 +175,22 @@ export default function DevicesPreset({}: DevicesPresetProps) {
       // either request permission and setup the local track
       // if already created but stopped, start the track
       if (!!localVideo) {
-        console.log("video track setup -- start the track");
+        // video track setup -- start the track
         localVideo?.restart();
         setCamEnabled(true);
       } else {
         // no existing track, ask for permissions and setup
-        console.log(
-          `setup local video track, local preferred device ID is ${localVideoDeviceId}`
-        );
         // If we have don't have a device id yet (e.g. from local storage), find one!
         if (!localVideoDeviceId) {
-          navigator.mediaDevices.enumerateDevices().then((devices) => {
-            const newDeviceId = devices.find(
-              (device) => device.kind === "videoinput"
-            )?.deviceId;
-            console.log(
-              `No existing device ID, so found deviceID ${newDeviceId}`
-            );
-            localVideoDeviceId = newDeviceId ?? null;
-          });
+          const newDeviceID = await navigator.mediaDevices
+            .enumerateDevices()
+            .then((devices) => {
+              const newDeviceId = devices.find(
+                (device) => device.kind === "videoinput"
+              )?.deviceId;
+              return newDeviceId ?? null;
+            });
+          localVideoDeviceId = newDeviceID;
         }
 
         if (localVideoDeviceId) {
@@ -188,22 +204,18 @@ export default function DevicesPreset({}: DevicesPresetProps) {
               setDevicePermissions("camera", true);
             })
             .catch((error) => {
-              console.log("error", error.message);
               toaster.push({
                 message: `Error: ${error.message}`,
                 variant: "error",
               });
               setCamEnabled(false);
-              setDevicePermissions("camera", false);
             });
         } else {
-          console.log("No video input device id found");
           toaster.push({
             message: `Error: No video device found`,
             variant: "error",
           });
           setCamEnabled(false);
-          setDevicePermissions("camera", false);
         }
       }
     }
