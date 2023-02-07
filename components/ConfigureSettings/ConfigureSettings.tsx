@@ -45,6 +45,7 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
     devicePermissions,
     activeSinkId,
     setActiveSinkId,
+    room,
   } = useVideoStore((state: VideoAppState) => state);
   const localVideo = localTracks.video;
   const localAudio = localTracks.audio;
@@ -185,11 +186,15 @@ export default function ConfigureSettings({}: ConfigureSettingsProps) {
   return (
     <Flex hAlignContent={"center"} width="100%">
       <Tooltip text="Configure settings" placement="top">
-        <Button variant={"secondary"} onClick={handleOpen}>
+        <Button variant={!room ? "secondary" : "reset"} onClick={handleOpen}>
           <FiSettings
-            style={{ width: "25px", height: "25px", marginRight: "6px" }}
+            style={{
+              width: "25px",
+              height: "25px",
+              marginRight: !room ? "6px" : "0px",
+            }}
           />
-          Settings
+          {!room ? "Settings" : null}
         </Button>
       </Tooltip>
       <Modal

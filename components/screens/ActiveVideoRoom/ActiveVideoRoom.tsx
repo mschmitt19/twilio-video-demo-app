@@ -10,10 +10,11 @@ import ToggleAudio from "./LocalControls/ToggleAudio/ToggleAudio";
 import ToggleScreenshare from "./LocalControls/ToggleScreenshare/ToggleScreenshare";
 import LeaveRoom from "./LocalControls/LeaveRoom/LeaveRoom";
 import RoomInfo from "./RoomInfo/RoomInfo";
-// import { shipRoomStats } from "../../../lib/api";
+import { shipRoomStats } from "../../../lib/api";
 import useScreenShareParticipant from "../../../lib/hooks/useScreenShareParticipant";
 import GridView from "./GridView/GridView";
 import FocusedTrackView from "./FocusedTrackView/FocusedTrackView";
+import MenuActions from "./MenuActions/MenuActions";
 
 interface OrderedParticipant {
   participant: Video.RemoteParticipant;
@@ -91,20 +92,16 @@ export default function ActiveVideoRoom({}) {
     }
   }, [room]);
 
-  /**
-   * Current issues with getStats on Chrome: https://github.com/twilio/twilio-video.js/issues/1968
-   * Will uncomment when resolved
-   */
-  // Ship WebRTC stats to data store
-  // useEffect(() => {
-  //   const shipStats = setInterval(async () => {
-  //     room
-  //       ?.getStats()
-  //       .then((results) => shipRoomStats(results[0]))
-  //       .catch((error) => console.log("error gathering WebRTC stats", error));
-  //   }, 15000);
-  //   return () => clearInterval(shipStats);
-  // }, [room]);
+  //Ship WebRTC stats to data store
+  useEffect(() => {
+    const shipStats = setInterval(async () => {
+      room
+        ?.getStats()
+        .then((results) => shipRoomStats(results[0]))
+        .catch((error) => console.log("error gathering WebRTC stats", error));
+    }, 15000);
+    return () => clearInterval(shipStats);
+  }, [room]);
 
   // Disconnect from the Video room if browser tab is refreshed or closed
   window.addEventListener("beforeunload", () => {
@@ -142,6 +139,7 @@ export default function ActiveVideoRoom({}) {
               <ToggleVideo />
               <ToggleScreenshare />
               <ConfigureSettings />
+              <MenuActions />
             </Stack>
           </Flex>
           <Flex>
