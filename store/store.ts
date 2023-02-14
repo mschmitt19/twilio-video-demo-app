@@ -44,6 +44,7 @@ export interface VideoAppState {
   devicePermissions: PermissionsState;
   hasSkippedPermissionCheck: boolean;
   localTracks: LocalTracks;
+  localEmoji: string | undefined;
   activeSinkId: undefined | string;
   setActiveSinkId: (deviceId: string) => void;
   setDevicePermissions: (
@@ -57,10 +58,11 @@ export interface VideoAppState {
   clearActiveRoom: () => void;
   setHasSkippedPermissionCheck: (hasSkipped: boolean) => void;
   setLocalTracks: (
-    type: "audio" | "video" | "screen",
+    type: "audio" | "video" | "screen" | "data",
     track: Video.LocalAudioTrack | Video.LocalVideoTrack | Video.LocalDataTrack
   ) => void;
-  clearTrack: (type: "audio" | "video" | "screen") => void;
+  clearTrack: (type: "audio" | "video" | "screen" | "data") => void;
+  setLocalEmoji: (emoji?: string) => void;
   resetState: () => void;
 }
 
@@ -78,6 +80,7 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
     microphone: false,
   },
   hasSkippedPermissionCheck: false,
+  localEmoji: undefined,
   localTracks: {
     audio: undefined,
     video: undefined,
@@ -99,6 +102,7 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
       });
     }
   },
+  setLocalEmoji: (emoji?: string) => set({ localEmoji: emoji ?? undefined }),
   setLocalTracks: (type, track: any) => {
     const currentTracks = get().localTracks;
     if (type === "audio") {
@@ -109,6 +113,9 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
     }
     if (type === "screen") {
       set({ localTracks: { ...currentTracks, screen: track } });
+    }
+    if (type === "data") {
+      set({ localTracks: { ...currentTracks, data: track } });
     }
   },
   clearTrack: (type) => {
@@ -133,6 +140,7 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
       room: null,
       disconnectError: null,
       hasSkippedPermissionCheck: false,
+      localEmoji: undefined,
       devicePermissions: {
         camera: false,
         microphone: false,
@@ -155,6 +163,7 @@ export const useVideoStore = create<VideoAppState>()((set, get) => ({
         camera: false,
         microphone: false,
       },
+      localEmoji: undefined,
       localTracks: {
         audio: undefined,
         video: undefined,

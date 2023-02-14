@@ -21,9 +21,12 @@ import {
   OverlayContent,
   InnerPreviewContainer,
   AvatarContainer,
+  OverlayEmoji,
 } from "../../../styled";
 import useIsTrackEnabled from "../../../../lib/hooks/useIsTrackEnabled";
 import NetworkQualityLevel from "./NetworkQualityLevel/NetworkQualityLevel";
+import { useVideoStore, VideoAppState } from "../../../../store/store";
+import useRemoteEmojiDataTrack from "../../../../lib/hooks/useRemoteEmojiDataTrack";
 
 interface RoomParticipantProps {
   participant: IParticipant;
@@ -32,8 +35,6 @@ interface RoomParticipantProps {
   isMainFocus: boolean;
 }
 
-/* WORK IN PROGRESS */
-
 export default function Participant({
   participant,
   isLocalParticipant,
@@ -41,16 +42,21 @@ export default function Participant({
   isMainFocus,
 }: RoomParticipantProps) {
   const { identity } = participant;
+  const { localEmoji } = useVideoStore((state: VideoAppState) => state);
   const publications = usePublications(participant);
   const audioPublication = publications.find((p) => p.kind === "audio");
   const videoPublication = publications.find(
     (p) => !p.trackName.includes("screen") && p.kind === "video"
   );
+  const dataPublication = publications.find((p) => p.kind === "data");
   const isVideoEnabled = Boolean(videoPublication);
   const isScreenShareEnabled = publications.find((p) =>
     p.trackName.includes("screen")
   );
 
+  const remoteEmoji = !isLocalParticipant
+    ? useRemoteEmojiDataTrack(dataPublication)
+    : null;
   const videoTrack = useTrack(videoPublication);
   const isVideoSwitchedOff = useIsTrackSwitchedOff(
     videoTrack as LocalVideoTrack | RemoteVideoTrack
@@ -77,6 +83,10 @@ export default function Participant({
   return (
     <InfoContainer id={participant.sid}>
       <VideoPreviewContainer>
+        {localEmoji && isLocalParticipant && (
+          <OverlayEmoji>{localEmoji}</OverlayEmoji>
+        )}
+        {remoteEmoji && <OverlayEmoji>{remoteEmoji}</OverlayEmoji>}
         <OverlayContent>
           <Stack orientation="horizontal" spacing="space10">
             {!!isScreenShareEnabled && (

@@ -61,7 +61,17 @@ export default function DevicesPreset({}: DevicesPresetProps) {
 
   const joinVideoClicked = async () => {
     setLoading(true);
-    let tracks = [];
+
+    // Setup a local data track to be used per participant
+    const dataTrack = new Video.LocalDataTrack({
+      name: "emoji",
+    });
+    setLocalTracks("data", dataTrack);
+    let tracks: (
+      | Video.LocalVideoTrack
+      | Video.LocalDataTrack
+      | Video.LocalAudioTrack
+    )[] = [dataTrack];
 
     if (localVideo) {
       tracks.push(localVideo);
