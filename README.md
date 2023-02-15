@@ -10,6 +10,29 @@ This proof-of-concept application demonstrates how you can build a video applica
 
 To get up and running locally with this repository, please see the [Local Development](#local-development) section below.
 
+---
+
+1. [Features 🕹️](#features-🕹️)
+2. [What is it 🧐](#what-is-it-🧐)
+   1. [Landing Screen](#landing-screen)
+   2. [Pre-Join Screen](#pre-join-screen)
+   3. [Active Video Room Screen](#active-video-room-screen)
+   4. [Post-Video Room Screen](#post-video-room-screen)
+3. [Code Organization 👾](#code-organization-👾)
+   1. [📁 pages](#📁-pages)
+   2. [📁 components](#📁-components)
+   3. [📁 lib](#📁-lib)
+   4. [📁 store](#📁-store)
+4. [Reporting & Monitoring 📊](#reporting--monitoring-📊)
+   1. [Store WebRTC Stats](#store-webrtc-stats)
+   2. [Store Survey Feedback](#store-survey-feedback)
+   3. [Room Status Callbacks](#room-status-callbacks)
+   4. [Video Insights Event Streams](#video-insights-event-streams)
+5. [Local Development 💻](#local-development-💻)
+6. [License](#license)
+
+---
+
 ## Features 🕹️
 
 - [x] Local Permissions Checks & pre-emptive warnings
@@ -98,7 +121,7 @@ The routes for the application based on [file-system based routing](https://next
 
 The user interface components that comprise the application, with a few specific callouts:
 
-- [📁 screens](./components/screens/) - the parent components representing the four different screens outline in the [What is it](#what-is-it-🧐) section
+- [📁 screens](./components/screens/) - the parent components representing the four different screens outlined in the [What is it](#what-is-it-🧐) section
 - [📄 VideoProvider.tsx](./components/VideoProvider/VideoProvider.tsx) - the main logic controller for determining which screen to show based on the global state store
 - [📄 styled.ts](./components/styled.ts) - styled components built using the Twilio Paste styling library and CSS
 
@@ -213,3 +236,7 @@ Please see the [Webhook Quickstart](https://www.twilio.com/docs/events/webhook-q
    ```
    http://localhost:3000/?roomName=test
    ```
+
+## License
+
+[MIT](http://www.opensource.org/licenses/mit-license.html)

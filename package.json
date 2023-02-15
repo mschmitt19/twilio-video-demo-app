@@ -2,6 +2,7 @@
   "name": "@twilio-paste/nextjs-template",
   "version": "1.0.17",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
