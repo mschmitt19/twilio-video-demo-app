@@ -12,28 +12,28 @@ To get up and running locally with this repository, please see the [Local Develo
 
 ---
 
-1. [Features 🕹️](#features-🕹️)
-2. [What is it 🧐](#what-is-it-🧐)
+1. [Features 🕹️](#features)
+2. [What is it 🧐](#what-is-it)
    1. [Landing Screen](#landing-screen)
    2. [Pre-Join Screen](#pre-join-screen)
    3. [Active Video Room Screen](#active-video-room-screen)
    4. [Post-Video Room Screen](#post-video-room-screen)
-3. [Code Organization 👾](#code-organization-👾)
-   1. [📁 pages](#📁-pages)
-   2. [📁 components](#📁-components)
-   3. [📁 lib](#📁-lib)
-   4. [📁 store](#📁-store)
-4. [Reporting & Monitoring 📊](#reporting--monitoring-📊)
+3. [Code Organization 👾](#code-organization)
+   1. [📁 pages](#pages)
+   2. [📁 components](#components)
+   3. [📁 lib](#lib)
+   4. [📁 store](#store)
+4. [Reporting & Monitoring 📊](#reporting--monitoring)
    1. [Store WebRTC Stats](#store-webrtc-stats)
    2. [Store Survey Feedback](#store-survey-feedback)
    3. [Room Status Callbacks](#room-status-callbacks)
    4. [Video Insights Event Streams](#video-insights-event-streams)
-5. [Local Development 💻](#local-development-💻)
+5. [Local Development 💻](#local-development)
 6. [License](#license)
 
 ---
 
-## Features 🕹️
+## Features
 
 - [x] Local Permissions Checks & pre-emptive warnings
 - [x] Preflight API check
@@ -49,7 +49,7 @@ To get up and running locally with this repository, please see the [Local Develo
 
 #
 
-## What is it 🧐
+## What is it
 
 The application is broken down into four distinct stages of a typical video chat experience, specifically focusing on:
 
@@ -105,11 +105,11 @@ The application is broken down into four distinct stages of a typical video chat
 
 #
 
-## Code Organization 👾
+## Code Organization
 
 The following breakdown highlights what each section of this repository is responsible for.
 
-### [📁 pages](./pages/)
+### [pages](./pages/)
 
 The routes for the application based on [file-system based routing](https://nextjs.org/docs/routing/introduction) provided by the Next.js framework.
 
@@ -117,15 +117,15 @@ The routes for the application based on [file-system based routing](https://next
 - [📄 \_app.tsx](./pages/_app.tsx) - the entry point for the application which contains wrapper components to setup our `Query Client` for [React Query](https://react-query-v3.tanstack.com/) and `Theme Provider` from [Twilio Paste](https://paste.twilio.design/introduction/for-engineers/manual-installation#setting-up-the-theme-provider)
 - [📄 index.tsx](./pages/index.tsx) - the base route for the application (`/`); sets up the title of the web page, sets the favicon logo, and renders the [Video Provider](./components/VideoProvider/VideoProvider.tsx) component
 
-### [📁 components](./components/)
+### [components](./components/)
 
 The user interface components that comprise the application, with a few specific callouts:
 
-- [📁 screens](./components/screens/) - the parent components representing the four different screens outlined in the [What is it](#what-is-it-🧐) section
+- [📁 screens](./components/screens/) - the parent components representing the four different screens outlined in the [What is it](#what-is-it) section
 - [📄 VideoProvider.tsx](./components/VideoProvider/VideoProvider.tsx) - the main logic controller for determining which screen to show based on the global state store
 - [📄 styled.ts](./components/styled.ts) - styled components built using the Twilio Paste styling library and CSS
 
-### [📁 lib](./lib/)
+### [lib](./lib/)
 
 The utility folder of the application containing custom hooks, helper functions, middelware API, and type definitions.
 
@@ -134,13 +134,13 @@ The utility folder of the application containing custom hooks, helper functions,
 - [📄 api.ts](./lib/api.ts) - middleware functions setup using `axios` and `React Query` (currently only to fetch an Access Token)
 - [📄 types.ts](./lib/types.ts) - type definitions
 
-### [📁 store](./store/)
+### [store](./store/)
 
 The global state management solution to store and access information across the application. The [Zustand](https://github.com/pmndrs/zustand) library is being utilized here.
 
 #
 
-## Reporting & Monitoring 📊
+## Reporting & Monitoring
 
 Reporting on video rooms is critical to understanding the performance of your application. While Twilio offers the [Video Insights Dashboard](https://www.twilio.com/docs/video/troubleshooting/insights) to view trends over time, it is valuable to develop your own data analysis workflows to understand performance at a more granular level.
 
@@ -199,7 +199,7 @@ Please see the [Webhook Quickstart](https://www.twilio.com/docs/events/webhook-q
 
 #
 
-## Local Development 💻
+## Local Development
 
 1. After cloning the repository, install the package dependencies:
 
