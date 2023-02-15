@@ -10,6 +10,20 @@ This proof-of-concept application demonstrates how you can build a video applica
 
 To get up and running locally with this repository, please see the [Local Development](#local-development) section below.
 
+## Features 🕹️
+
+- [x] Local Permissions Checks & pre-emptive warnings
+- [x] Preflight API check
+- [x] Device configuration & local storage preferences
+- [x] Mute & unmute local camera & microphone
+- [x] Screensharing
+- [x] Copy meeting invite link to clipboard
+- [x] Dominant speaker detection
+- [x] Network Quality API
+- [x] Emoji Reactions using Data Tracks
+- [x] Storing `WebRTC` stats using `room.getStats()`
+- [x] Post-call Survey Collection
+
 #
 
 ## What is it 🧐
@@ -33,7 +47,7 @@ The application is broken down into four distinct stages of a typical video chat
 <img  src="https://hosted-assets-2838-dev.twil.io/prejoin.png"  alt="Twilio"  width="100%"  />
 </div>
 
-- Preview and configure local devices prior to joining the room
+- Preview and configure local devices prior to joining the room - changes to default devices will be stored in local storage to default to preferred device IDs
 - Optionally enter the video room with camera or microphone enabled/disabled
 - Retrieve Access Token scoped to the Video Room name
 - [Preflight API](https://www.twilio.com/docs/video/troubleshooting/preflight-api) check runs in the background when the Access Token is returned - `passed` result allows them to join the room, any failure results in disabling the `Join Room` button
@@ -51,6 +65,8 @@ The application is broken down into four distinct stages of a typical video chat
   - Toggle camera on/off
   - Toggle screenshare on/off
   - Configure settings (local devices)
+  - Emoji Reactions (using Data Tracks)
+  - Copy Invite Link to clipboard
   - Disconnect from room
 - Monitoring - utilizes the `getStats()` method on the `room` object to gather WebRTC statistics for the participants and sends them to a webhook for data storage (for more information, see the [Reporting & Monitoring](#reporting--monitoring) section)
 
