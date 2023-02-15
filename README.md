@@ -82,7 +82,7 @@ The application is broken down into four distinct stages of a typical video chat
 
 #
 
-## Code Organization
+## Code Organization 👾
 
 The following breakdown highlights what each section of this repository is responsible for.
 
@@ -117,7 +117,7 @@ The global state management solution to store and access information across the 
 
 #
 
-## Reporting & Monitoring
+## Reporting & Monitoring 📊
 
 Reporting on video rooms is critical to understanding the performance of your application. While Twilio offers the [Video Insights Dashboard](https://www.twilio.com/docs/video/troubleshooting/insights) to view trends over time, it is valuable to develop your own data analysis workflows to understand performance at a more granular level.
 
@@ -176,7 +176,7 @@ Please see the [Webhook Quickstart](https://www.twilio.com/docs/events/webhook-q
 
 #
 
-## Local Development
+## Local Development 💻
 
 1. After cloning the repository, install the package dependencies:
 
