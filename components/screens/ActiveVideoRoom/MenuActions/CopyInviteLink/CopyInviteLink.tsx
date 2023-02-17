@@ -51,7 +51,7 @@ export default function CopyInviteLink({
     <>
       <MenuItem
         {...menu}
-        onClick={(e) => {
+        onClick={() => {
           generateAndCopyRoomInvite();
         }}
       >

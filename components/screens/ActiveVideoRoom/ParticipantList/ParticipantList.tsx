@@ -18,13 +18,11 @@ interface OrderedParticipant {
 interface GridViewProps {
   orderedParticipants: OrderedParticipant[];
   dominantSpeaker: Video.RemoteParticipant | null;
-  screenShareParticipant: any;
 }
 
 export default function ParticipantList({
   orderedParticipants,
   dominantSpeaker,
-  screenShareParticipant,
 }: GridViewProps) {
   const { room } = useVideoStore((state: VideoAppState) => state);
   const numParticipants =

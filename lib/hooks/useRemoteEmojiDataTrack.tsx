@@ -19,7 +19,7 @@ export default function useRemoteEmojiDataTrack(
     setTrack(publication && publication.track);
     if (publication) {
       const removeTrack = () => setTrack(null);
-
+      console.log(track);
       const dataTrackSubscribed = (track: any) => {
         setTrack(track);
         track.on("message", function (msg: string) {

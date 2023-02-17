@@ -14,7 +14,7 @@ import { TbScreenShare } from "react-icons/tb";
 import usePublications from "../../../../../lib/hooks/usePublications";
 import useTrack from "../../../../../lib/hooks/useTrack";
 import useIsTrackSwitchedOff from "../../../../../lib/hooks/useIsTrackSwitchedOff";
-import useParticipantIsReconnecting from "../../../../../lib/hooks/useParticipantIsReconnecting";
+//import useParticipantIsReconnecting from "../../../../../lib/hooks/useParticipantIsReconnecting";
 import {
   VideoPreviewContainer,
   OverlayContent,
@@ -63,7 +63,7 @@ export default function ParticipantInfo({
     | RemoteAudioTrack
     | undefined;
   const isAudioEnabled = useIsTrackEnabled(audioTrack);
-  const isParticipantReconnecting = useParticipantIsReconnecting(participant);
+  //const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
   const InfoContainer = styled.div(
     css({
