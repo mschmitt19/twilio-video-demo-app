@@ -59,6 +59,17 @@ export const CenterContent = styled.div(
   })
 );
 
+export const OverlayEmoji = styled.div(
+  css({
+    position: "absolute",
+    top: 20,
+    left: 5,
+    padding: "space20",
+    zIndex: 60,
+    fontSize: "3rem",
+  })
+);
+
 export const OverlayContent = styled.div(
   css({
     position: "absolute",

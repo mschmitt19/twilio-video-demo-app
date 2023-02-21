@@ -74,7 +74,7 @@ export default function ActiveVideoRoom({}) {
       room.on("participantConnected", handleParticipantConnected);
       room.on("participantDisconnected", handleParticipantDisconnected);
       room.on("dominantSpeakerChanged", handleDominantSpeakerChanged);
-      room.once("disconnected", (room, error) => {
+      room.once("disconnected", (error) => {
         localTracks.audio?.stop();
         localTracks.video?.stop();
         localTracks.screen?.stop();
@@ -125,14 +125,12 @@ export default function ActiveVideoRoom({}) {
       )}
       <FooterDiv>
         <Flex width="100%" height="100%" vAlignContent="center">
-          {/* <HiddenWhen> */}
           <Flex>
             <RoomInfo
               roomName={formData.roomName}
               numParticipants={orderedParticipants.length + 1}
             />
           </Flex>
-          {/* </HiddenWhen> */}
           <Flex grow hAlignContent={"center"}>
             <Stack orientation="horizontal" spacing="space70">
               <ToggleAudio />

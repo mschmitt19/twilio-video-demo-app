@@ -43,7 +43,6 @@ export default function FocusedTrackView({
         <Box width={["100%", "100%", "20%"]} height={["20%", "20%", "100%"]}>
           <ParticipantList
             orderedParticipants={orderedParticipants}
-            screenShareParticipant={screenShareParticipant}
             dominantSpeaker={dominantSpeaker}
           />
         </Box>

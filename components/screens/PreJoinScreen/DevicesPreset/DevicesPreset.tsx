@@ -29,7 +29,7 @@ import {
 } from "../../../../lib/constants";
 import { useGetToken } from "../../../../lib/api";
 import PermissionsWarning from "../PermissionsWarning/PermissionsWarning";
-import useMediaStreamTrack from "../../../../lib/hooks/useMediaStreamTrack";
+//import useMediaStreamTrack from "../../../../lib/hooks/useMediaStreamTrack";
 
 interface DevicesPresetProps {}
 
@@ -57,11 +57,21 @@ export default function DevicesPreset({}: DevicesPresetProps) {
   const localVideo = localTracks.video;
   const localAudio = localTracks.audio;
   // Need the MediaStreamTrack to be able to react to (and re-render) on track restarts
-  const localMediaStreamTrack = useMediaStreamTrack(localVideo);
+  //const localMediaStreamTrack = useMediaStreamTrack(localVideo);
 
   const joinVideoClicked = async () => {
     setLoading(true);
-    let tracks = [];
+
+    // Setup a local data track to be used per participant
+    const dataTrack = new Video.LocalDataTrack({
+      name: "emoji",
+    });
+    setLocalTracks("data", dataTrack);
+    let tracks: (
+      | Video.LocalVideoTrack
+      | Video.LocalDataTrack
+      | Video.LocalAudioTrack
+    )[] = [dataTrack];
 
     if (localVideo) {
       tracks.push(localVideo);

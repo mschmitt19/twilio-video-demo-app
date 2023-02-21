@@ -10,9 +10,46 @@ This proof-of-concept application demonstrates how you can build a video applica
 
 To get up and running locally with this repository, please see the [Local Development](#local-development) section below.
 
+---
+
+1. [Features 🕹️](#features)
+2. [What is it 🧐](#what-is-it)
+   1. [Landing Screen](#landing-screen)
+   2. [Pre-Join Screen](#pre-join-screen)
+   3. [Active Video Room Screen](#active-video-room-screen)
+   4. [Post-Video Room Screen](#post-video-room-screen)
+3. [Code Organization 👾](#code-organization)
+   1. [📁 pages](#pages)
+   2. [📁 components](#components)
+   3. [📁 lib](#lib)
+   4. [📁 store](#store)
+4. [Reporting & Monitoring 📊](#reporting--monitoring)
+   1. [Store WebRTC Stats](#store-webrtc-stats)
+   2. [Store Survey Feedback](#store-survey-feedback)
+   3. [Room Status Callbacks](#room-status-callbacks)
+   4. [Video Insights Event Streams](#video-insights-event-streams)
+5. [Local Development 💻](#local-development)
+6. [License](#license)
+
+---
+
+## Features
+
+- [x] Local Permissions Checks & pre-emptive warnings
+- [x] Preflight API check
+- [x] Device configuration & local storage preferences
+- [x] Mute & unmute local camera & microphone
+- [x] Screensharing
+- [x] Copy meeting invite link to clipboard
+- [x] Dominant speaker detection
+- [x] Network Quality API
+- [x] Emoji Reactions using Data Tracks
+- [x] Storing `WebRTC` stats using `room.getStats()`
+- [x] Post-call Survey Collection
+
 #
 
-## What is it 🧐
+## What is it
 
 The application is broken down into four distinct stages of a typical video chat experience, specifically focusing on:
 
@@ -33,7 +70,7 @@ The application is broken down into four distinct stages of a typical video chat
 <img  src="https://hosted-assets-2838-dev.twil.io/prejoin.png"  alt="Twilio"  width="100%"  />
 </div>
 
-- Preview and configure local devices prior to joining the room
+- Preview and configure local devices prior to joining the room - changes to default devices will be stored in local storage to default to preferred device IDs
 - Optionally enter the video room with camera or microphone enabled/disabled
 - Retrieve Access Token scoped to the Video Room name
 - [Preflight API](https://www.twilio.com/docs/video/troubleshooting/preflight-api) check runs in the background when the Access Token is returned - `passed` result allows them to join the room, any failure results in disabling the `Join Room` button
@@ -51,6 +88,8 @@ The application is broken down into four distinct stages of a typical video chat
   - Toggle camera on/off
   - Toggle screenshare on/off
   - Configure settings (local devices)
+  - Emoji Reactions (using Data Tracks)
+  - Copy Invite Link to clipboard
   - Disconnect from room
 - Monitoring - utilizes the `getStats()` method on the `room` object to gather WebRTC statistics for the participants and sends them to a webhook for data storage (for more information, see the [Reporting & Monitoring](#reporting--monitoring) section)
 
@@ -70,7 +109,7 @@ The application is broken down into four distinct stages of a typical video chat
 
 The following breakdown highlights what each section of this repository is responsible for.
 
-### [📁 pages](./pages/)
+### [pages](./pages/)
 
 The routes for the application based on [file-system based routing](https://nextjs.org/docs/routing/introduction) provided by the Next.js framework.
 
@@ -78,15 +117,15 @@ The routes for the application based on [file-system based routing](https://next
 - [📄 \_app.tsx](./pages/_app.tsx) - the entry point for the application which contains wrapper components to setup our `Query Client` for [React Query](https://react-query-v3.tanstack.com/) and `Theme Provider` from [Twilio Paste](https://paste.twilio.design/introduction/for-engineers/manual-installation#setting-up-the-theme-provider)
 - [📄 index.tsx](./pages/index.tsx) - the base route for the application (`/`); sets up the title of the web page, sets the favicon logo, and renders the [Video Provider](./components/VideoProvider/VideoProvider.tsx) component
 
-### [📁 components](./components/)
+### [components](./components/)
 
 The user interface components that comprise the application, with a few specific callouts:
 
-- [📁 screens](./components/screens/) - the parent components representing the four different screens outline in the [What is it](#what-is-it-🧐) section
+- [📁 screens](./components/screens/) - the parent components representing the four different screens outlined in the [What is it](#what-is-it) section
 - [📄 VideoProvider.tsx](./components/VideoProvider/VideoProvider.tsx) - the main logic controller for determining which screen to show based on the global state store
 - [📄 styled.ts](./components/styled.ts) - styled components built using the Twilio Paste styling library and CSS
 
-### [📁 lib](./lib/)
+### [lib](./lib/)
 
 The utility folder of the application containing custom hooks, helper functions, middelware API, and type definitions.
 
@@ -95,7 +134,7 @@ The utility folder of the application containing custom hooks, helper functions,
 - [📄 api.ts](./lib/api.ts) - middleware functions setup using `axios` and `React Query` (currently only to fetch an Access Token)
 - [📄 types.ts](./lib/types.ts) - type definitions
 
-### [📁 store](./store/)
+### [store](./store/)
 
 The global state management solution to store and access information across the application. The [Zustand](https://github.com/pmndrs/zustand) library is being utilized here.
 
@@ -197,3 +236,7 @@ Please see the [Webhook Quickstart](https://www.twilio.com/docs/events/webhook-q
    ```
    http://localhost:3000/?roomName=test
    ```
+
+## License
+
+[MIT](http://www.opensource.org/licenses/mit-license.html)

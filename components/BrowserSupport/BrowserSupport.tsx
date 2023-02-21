@@ -10,11 +10,11 @@ export default function BrowserSupport({
 }: {
   children: React.ReactElement;
 }) {
-  const [videoSupported, setVideoSupported] = useState(false);
+  const [videoSupported, setVideoSupported] = useState(true);
 
   useEffect(() => {
-    if (Video.isSupported) {
-      setVideoSupported(true);
+    if (!Video.isSupported) {
+      setVideoSupported(false);
     }
   }, []);
 
