@@ -28,7 +28,7 @@ export default function CopyInviteLink({
 
   async function generateAndCopyRoomInvite() {
     try {
-      const link = `${window.location.origin}/?roomName=${formData.roomName}`;
+      const link = `${window.location.origin}?roomName=${formData.roomName}`;
       if ("clipboard" in navigator) {
         await navigator.clipboard.writeText(link);
       }
