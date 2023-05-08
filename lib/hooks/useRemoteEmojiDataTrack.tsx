@@ -5,7 +5,7 @@ export default function useRemoteEmojiDataTrack(
   publication: LocalTrackPublication | RemoteTrackPublication | undefined
 ) {
   const [track, setTrack] = useState(publication && publication.track);
-  const [remoteEmoji, setRemoteEmoji] = useState("");
+  const [remoteEmoji, setRemoteEmoji] = useState<string | undefined>();
 
   const setTemporaryEmoji = (msg: string) => {
     setRemoteEmoji(msg);
@@ -14,12 +14,14 @@ export default function useRemoteEmojiDataTrack(
     }, 10000);
   };
 
+  console.log("hook remoteEmoji", remoteEmoji);
+
   useEffect(() => {
     // Reset the track when the 'publication' variable changes.
     setTrack(publication && publication.track);
     if (publication) {
       const removeTrack = () => setTrack(null);
-      console.log(track);
+      //console.log(track);
       const dataTrackSubscribed = (track: any) => {
         setTrack(track);
         track.on("message", function (msg: string) {

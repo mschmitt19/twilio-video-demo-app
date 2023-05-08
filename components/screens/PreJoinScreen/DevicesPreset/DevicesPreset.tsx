@@ -152,7 +152,7 @@ export default function DevicesPreset({}: DevicesPresetProps) {
             .then((localTracks) => {
               setLocalTracks("audio", localTracks[0]);
               setMicEnabled(true);
-              setDevicePermissions("camera", true);
+              setDevicePermissions("microphone", true);
             })
             .catch((error) => {
               toaster.push({

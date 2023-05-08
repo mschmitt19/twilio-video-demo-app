@@ -76,10 +76,6 @@ export default function ParticipantInfo({
     })
   );
 
-  useEffect(() => {
-    console.log("Participant info rendered");
-  });
-
   return (
     <InfoContainer id={participant.sid}>
       <VideoPreviewContainer>
