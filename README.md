@@ -62,7 +62,9 @@ The application is broken down into four distinct stages of a typical video chat
 - The initial view that is loaded at the base URL
 - Provides the ability to create or join a video room
 - Form inputs for `Participant Name` (name shown in room) and `Room Name` (Twilio Video Room to join/create)
-- If you append the `?roomName=test` parameter to the URL, this will autopopulate the `Room Name` field and disable it, requiring only a `Participant Name` to be entered before proceeding to the `Pre-Join Screen`
+- If you append the `identity` parameter to the URL, this will autopopulate the `Participant Name` field and disable it.  
+- If you append the `roomName` parameter to the URL, this will autopopulate the `Room Name` field and disable it.
+- If you append both the `identity` and `roomName` parameters to the URL, this will automatically proceed to the `Pre-Join Screen`, without requiring any user input.
 
 ### [Pre-Join Screen](/components/screens/PreJoinScreen/PreJoinScreen.tsx)
 
