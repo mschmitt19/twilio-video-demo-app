@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Flex,
   Card,
@@ -32,11 +32,13 @@ const formSchema = yup
 
 export default function LandingScreen({}) {
   const router = useRouter();
+  const [identityDisabled, setIdentityDisabled] = useState(false);
   const [roomNameDisabled, setRoomNameDisabled] = useState(false);
   const { ROOM_NAME_INPUT_DISABLED, ROOM_NAME_INPUT_ENABLED } = TEXT_COPY;
   const { setUIStep, setFormData, setDevicePermissions } = useVideoStore(
     (state: VideoAppState) => state
   );
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const {
     register,
@@ -59,14 +61,23 @@ export default function LandingScreen({}) {
 
   // Runs to check if the roomName parameter is pre-populated in the URL
   useEffect(() => {
-    const { roomName } = router.query;
+    const { identity, roomName } = router.query;
     // Joining with an invite link, pre-populate input field and disable
+    if (identity) {
+      setValue("identity", String(identity));
+      setIdentityDisabled(true);
+    }
     if (roomName) {
       setValue("roomName", String(roomName));
       setRoomNameDisabled(true);
     }
   }, [router]);
 
+  useEffect(() => {
+    if (roomNameDisabled && identityDisabled) {
+      buttonRef.current?.click();
+    }
+  }, [roomNameDisabled, identityDisabled]);
   // Check current state of permissons immediately
   useEffect(() => {
     getPermissionStatus("camera").then((result) => {
@@ -112,7 +123,11 @@ export default function LandingScreen({}) {
                     <Label htmlFor="identity" required>
                       Participant Name
                     </Label>
-                    <Input {...register("identity")} type="text" />
+                    <Input
+                      {...register("identity")}
+                      type="text"
+                      disabled={identityDisabled}
+                    />
                     {errors.identity && (
                       <Flex marginTop="space40" marginBottom="space40">
                         <Alert variant="error">
@@ -146,6 +161,7 @@ export default function LandingScreen({}) {
                   </Flex>
                   <Flex marginTop={"space40"}>
                     <Button
+                      ref={buttonRef}
                       type="submit"
                       variant="destructive"
                       style={{ background: "#F22F46" }}

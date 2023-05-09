@@ -25,7 +25,7 @@
     "react-icons": "^4.7.1",
     "react-query": "^3.39.2",
     "twilio": "^3.83.4",
-    "twilio-video": "^2.25.0",
+    "twilio-video": "^2.27.0",
     "yup": "^0.32.11",
     "zustand": "^4.1.4"
   },
